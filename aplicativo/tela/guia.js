@@ -202,6 +202,12 @@ var TELAS = {
       'dentro dos perfis do AdsPower. <b>Isto é para quando uma sessão cai</b> — aí ele entra ' +
       'sozinho, como você entraria: e-mail, senha e o código que a Shopee manda por e-mail.</p>' +
 
+    '<h3 class="g-sub">O nome dos perfis</h3>' +
+    '<p class="nota" style="margin:0 0 12px">O robô acha cada conta pelo nome do perfil no AdsPower. ' +
+      'Se os seus se chamam <b>S21</b>, <b>S22</b>…, escreva <b>S</b>. Em branco, vale "shopee 21".</p>' +
+    '<label class="campo"><span>Como os perfis se chamam</span>' +
+      '<input id="gNomePerfil" spellcheck="false" placeholder="shopee" value="' + v("nomePerfil") + '"></label>' +
+
     '<h3 class="g-sub">O e-mail das contas</h3>' +
     '<p class="nota" style="margin:0 0 12px">O robô não guarda um e-mail por conta: ele monta cada ' +
       'um juntando um começo, o número da conta e o domínio.</p>' +
@@ -426,6 +432,7 @@ var DEPOIS = {
         emailDominio: $("gDominio").value.trim().replace(/^@/, ""),
         emailPrefixoAlto: dois ? $("gPrefixoAlto").value.trim() : "",
         emailFaixa: dois ? (Number($("gFaixa").value.trim()) || 0) : 0,
+        nomePerfil: $("gNomePerfil").value.trim(),
       };
       // Segredo vazio quer dizer "não mexi": manda só o que foi digitado.
       if ($("gSenha").value) m.shopeeSenha = $("gSenha").value;

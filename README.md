@@ -10,9 +10,9 @@
 </p>
 
 <p align="center">
-  <img alt="versão" src="https://img.shields.io/badge/vers%C3%A3o-0.1.16-5b4bc4">
+  <img alt="versão" src="https://img.shields.io/badge/vers%C3%A3o-0.1.17-5b4bc4">
   <img alt="plataformas" src="https://img.shields.io/badge/Windows%20%7C%20macOS-Electron-5b4bc4">
-  <img alt="testes" src="https://img.shields.io/badge/testes-932%20%2B%20168%20ensaios-2e7d32">
+  <img alt="testes" src="https://img.shields.io/badge/testes-932%20%2B%20194%20ensaios-2e7d32">
 </p>
 
 ---
@@ -92,7 +92,7 @@ Detalhes em [`aplicativo/COMO-INSTALAR.txt`](aplicativo/COMO-INSTALAR.txt) e
 | Grupo | Campos |
 |---|---|
 | AdsPower | endereço da Local API e chave |
-| Contas Shopee | começo do e-mail, domínio, "outro começo a partir de" (ex.: contas acima de 200 usam outro prefixo) e senha única |
+| Contas Shopee | como os perfis se chamam no AdsPower (ex.: "S" para S21), começo do e-mail, domínio, "outro começo a partir de" (ex.: contas acima de 200 usam outro prefixo) e senha única |
 | Caixa de e-mail | chave da RapidAPI (inboxes.com). O app avisa quando a cota está acabando. |
 | Shopify | endereço da loja e conexão via OAuth (ou ID e chave secreta do app do cliente) |
 

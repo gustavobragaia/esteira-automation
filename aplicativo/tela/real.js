@@ -94,7 +94,7 @@ async function ajustes(){
 
   var simples = [["shPrefixo","emailPrefixo"],["shPrefixoAlto","emailPrefixoAlto"],
                  ["shDominio","emailDominio"],["shFaixa","emailFaixa"],
-                 ["adsBase","adspowerBase"]];
+                 ["adsBase","adspowerBase"],["shNomePerfil","nomePerfil"]];
   simples.forEach(function(par){
     if (a[par[1]] != null) $(par[0]).value = a[par[1]];
   });

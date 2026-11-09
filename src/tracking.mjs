@@ -78,6 +78,19 @@ export function parseConta(raw) {
   let m;
   while ((m = re.exec(texto)) !== null) numeros.push(Number(m[1]));
 
+  // O nome que o CLIENTE dá aos perfis (Ajustes → "Como os perfis se
+  // chamam"), ex.: "S" → "S21" é a conta 21. Só vale a célula/nome INTEIRO
+  // nesse formato: um "S" solto no meio de um texto qualquer não pode virar
+  // conta. "shopee 21" continua valendo sempre, por cima disto.
+  if (numeros.length === 0) {
+    const nome = (process.env.NOME_PERFIL ?? "").trim();
+    if (nome) {
+      const esc = nome.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s*");
+      const m2 = new RegExp(`^${esc}\\s*[-_#.:]?\\s*0*(\\d{1,4})$`, "i").exec(texto);
+      if (m2) numeros.push(Number(m2[1]));
+    }
+  }
+
   if (numeros.length === 0) return { numeros: [], status: "nao-e-conta", raw: texto };
   return {
     numeros: [...new Set(numeros)],

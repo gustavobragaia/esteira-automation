@@ -38,6 +38,12 @@ const PADRAO = {
   linkRastreio: "",           // vazio = parcelsapp (src/shopify.mjs, LINK_RASTREIO_PADRAO)
   loginAutomatico: true,      // se o robô entra sozinho quando a sessão cai
 
+  // Como os perfis se chamam no AdsPower. Vazio = "shopee 21" (o padrão da
+  // Chomps, que continua valendo sempre). O segundo cliente nomeou os 591
+  // perfis "S21", "S13"… e o robô não achava nenhum. Só o começo, sem o
+  // número: "S" faz o perfil "S21" ser a conta 21.
+  nomePerfil: "",
+
   // Rodada
   navegadores: null,          // null = usar a recomendação da máquina
   som: true,
@@ -78,6 +84,16 @@ export function salvarAjustes(mudancas = {}) {
       throw new Error("o link de rastreio precisa começar com https:// e não pode ter espaços (ex.: https://parcelsapp.com/pt/tracking)");
     mudancas = { ...mudancas, linkRastreio: l };
   }
+  if (mudancas.nomePerfil != null) {
+    const n = String(mudancas.nomePerfil).trim();
+    // Sem número: o número é o que muda de perfil para perfil. "S21" aqui
+    // faria todo perfil ser lido como a conta errada.
+    if (/\d/.test(n))
+      throw new Error('escreva só o começo do nome do perfil, sem o número (ex.: "S" para perfis S21, S22…)');
+    if (n.length > 20 || /[^\p{L}\s._#-]/u.test(n))
+      throw new Error('o começo do nome do perfil pode ter só letras, espaço, ponto, traço ou # (ex.: "S" ou "Conta")');
+    mudancas = { ...mudancas, nomePerfil: n };
+  }
   const atual = lerAjustes();
   for (const [c, v] of Object.entries(mudancas)) {
     if (CAMPOS.includes(c)) atual[c] = v;
@@ -107,6 +123,7 @@ const NO_AMBIENTE = {
   emailDominio: "SHOPEE_EMAIL_DOMINIO",
   codigoChave: "RAPIDAPI_KEY",
   linkRastreio: "LINK_RASTREIO",
+  nomePerfil: "NOME_PERFIL",
 };
 
 // Campos em que VAZIO é uma resposta, não a falta de uma. "Nenhum segundo
@@ -114,7 +131,8 @@ const NO_AMBIENTE = {
 // e isso precisa chegar ao robô, senão o padrão da Chomps volta sozinho.
 // O link de rastreio apagado volta ao padrão (parcelsapp): vazio tem que
 // chegar ao robô, senão o último link digitado continuaria valendo.
-const VAZIO_VALE = new Set(["emailPrefixoAlto", "linkRastreio"]);
+// O nome do perfil apagado volta a ser só "shopee 21".
+const VAZIO_VALE = new Set(["emailPrefixoAlto", "linkRastreio", "nomePerfil"]);
 
 // O que ainda falta preencher para uma rodada poder acontecer.
 //

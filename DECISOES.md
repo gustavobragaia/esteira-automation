@@ -986,3 +986,27 @@ nunca entravam na lista da etapa 4 (que é só a escrita em lote).
 - "Colei o rastreio" mostra o mesmo aviso no quadro de conferir.
 - Testes: `scripts/testar-repetido.mjs` e `aplicativo/ensaio-repetido.mjs`;
   teste de mutação nos dois guardas (servidor e tela).
+
+## 09/11/2026 — v0.1.17: o nome dos perfis é do cliente
+
+O segundo cliente nomeou os 591 perfis do AdsPower "S21", "S13"… O Esteira só
+reconhecia "shopee 21" (padrão da Chomps), então não acharia **nenhum** perfil,
+e o teste de conexão diria "Conectado" mesmo assim.
+
+- Ajuste novo `nomePerfil` ("Como os perfis se chamam no AdsPower", em Ajustes
+  e no guia): só o começo, sem o número. "S" faz "S21" ser a conta 21.
+  Vazio = só "shopee 21". **"shopee 21" continua valendo sempre**, por cima.
+- O nome do cliente só vale para o texto INTEIRO no formato (`^S\s*21$`): um
+  "S" solto no meio de outro texto não pode virar conta. Vale igual na coluna
+  ONDE FOI FEITO O PEDIDO da planilha.
+- Recusa com número ("S21") ao salvar: guardar "S21" faria todo perfil ser
+  lido errado.
+- Mudar o nome esquece o mapa conta→perfil da varredura anterior.
+- **Aviso**: o teste de conexão do AdsPower agora lê os nomes de até 20 perfis
+  e, se nenhum for reconhecido, diz quais são e onde ajustar. Em Ajustes, um
+  aviso "Novo na versão 0.1.17" fica visível enquanto o campo estiver vazio.
+- Junto: o "Salvar" das contas no guia dizia "Não consegui guardar" depois de
+  guardar (o olho embrulha o input; o rótulo era procurado no pai errado).
+- Testes: `aplicativo/ensaio-nome-perfil.mjs` (AdsPower de mentira com perfis
+  S…, salvar, recusar, persistir após recarregar e em processo novo, guia,
+  apagar) e `aplicativo/ensaio-guia-contas.mjs`.

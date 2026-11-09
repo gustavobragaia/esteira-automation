@@ -8,7 +8,7 @@
 // serializado, e função não atravessa.
 
 import { lerMaquina, custoGB, TETO } from "../src/maquina.mjs";
-import { diagnosticar, apiAbertaSemChave } from "../src/adspower.mjs";
+import { diagnosticar, apiAbertaSemChave, listarPerfis } from "../src/adspower.mjs";
 import { conexaoAtiva, ESCOPOS, normalizarLoja, salvarConexao, provarCredenciais, esquecerToken } from "../src/shopify-conexao.mjs";
 import { identidadeDaLoja, escoposConcedidos } from "../src/shopify.mjs";
 import { lerPendentes, abasDaPlanilha, abaDeReenvio } from "../src/planilha.mjs";
@@ -39,8 +39,8 @@ import { diaLocal } from "../src/datas.mjs";
 import { readFileSync, writeFileSync } from "node:fs";
 import { montarDias } from "../src/historico-dias.mjs";
 import { contasVistas } from "../src/contas-vistas.mjs";
-import { duplicadasConhecidas } from "../src/perfis.mjs";
-import { emailDaConta } from "../src/tracking.mjs";
+import { duplicadasConhecidas, esquecerPerfis } from "../src/perfis.mjs";
+import { emailDaConta, parseConta } from "../src/tracking.mjs";
 import { lerRegistro } from "../src/escrita.mjs";
 import { emEstado } from "../src/caminhos.mjs";
 import { apagarConexao } from "../src/shopify-conexao.mjs";
@@ -101,6 +101,22 @@ export function construir({ aoLog = () => {}, aoEvento: enviar, porta = 3000, ab
     if (!c.chave || c.chave === "guardada") c.chave = a.adspowerChave;
     if (!c.base) c.base = a.adspowerBase;
     const d = await diagnosticar(c);
+    if (d.ok) {
+      // Conectar não basta: o robô acha cada conta pelo NOME do perfil. Se
+      // nenhum nome bate ("S21" sem o Ajuste dizer "S"), a rodada abriria
+      // zero navegadores — e o teste de conexão diria que está tudo certo.
+      try {
+        await new Promise((r) => setTimeout(r, 1100));   // 1 req/s da Local API
+        const nomes = ((await listarPerfis(1, 20, c))?.list ?? []).map((p) => String(p.name ?? ""));
+        const lidos = nomes.filter((n) => parseConta(n).numeros.length === 1);
+        if (nomes.length && !lidos.length) {
+          d.nomesNaoReconhecidos = nomes.slice(0, 3);
+          d.comoResolver = [...(d.comoResolver ?? []),
+            `Os perfis se chamam "${nomes.slice(0, 2).join('", "')}" e o Esteira não sabe qual conta é cada um. ` +
+            `Em Ajustes → Contas da Shopee, diga como os perfis se chamam (ex.: "S" para S21, S22…).`];
+        }
+      } catch { /* o teste de conexão já passou; isto é só um aviso a mais */ }
+    }
     return { ...d, abertaSemChave: d.ok ? await apiAbertaSemChave(c) : false };
   });
 
@@ -218,6 +234,8 @@ export function construir({ aoLog = () => {}, aoEvento: enviar, porta = 3000, ab
     "ajustes:salvar": (mudancas) => tentar(async () => {
       const a = salvarAjustes(limparGuardados(mudancas ?? {}));
       aplicarNoAmbiente(a);
+      // o nome dos perfis mudou: o mapa conta→perfil da varredura anterior não vale mais
+      if (mudancas && "nomePerfil" in mudancas) esquecerPerfis();
       return { ...semSegredos(a), falta: faltaConfigurar(a) };
     }),
 

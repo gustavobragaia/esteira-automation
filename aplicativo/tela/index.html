@@ -1424,6 +1424,17 @@ details.cred summary:hover{color:var(--tinta)}
         <p class="nota" style="margin:0 0 16px">Se faltar qualquer uma, o robô não consegue
           entrar: a conta vai para a etapa 3 esperando você.</p>
 
+        <label class="campo"><span>Como os perfis se chamam no AdsPower</span>
+          <input id="shNomePerfil" spellcheck="false" placeholder="shopee" style="max-width:220px">
+          <em>Só o começo do nome, sem o número. Em branco, vale "shopee 21".</em></label>
+        <p class="nota" id="shNomeEx" style="margin-top:2px"></p>
+        <div class="aviso" id="shNomeAviso" style="margin:8px 0 16px">
+          <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+          <span><b>Novo na versão 0.1.17: confira o nome dos seus perfis.</b> O robô acha cada conta
+            pelo nome do perfil no AdsPower. Se os seus se chamam, por exemplo, <b>S21</b>, <b>S22</b>…,
+            escreva <b>S</b> no campo acima. Sem isso, ele não encontra nenhum perfil. Na planilha,
+            a coluna ONDE FOI FEITO O PEDIDO pode usar o mesmo nome do perfil (S21) ou "shopee 21".</span></div>
+
         <div class="par-campos">
           <label class="campo"><span>1 · Começo do e-mail</span>
             <input id="shPrefixo" spellcheck="false" placeholder="ex.: minhaloja">
@@ -2826,6 +2837,16 @@ function pintaExemploEmail(){
 ["shPrefixo","shPrefixoAlto","shDominio","shFaixa"].forEach(function(id){
   $(id).addEventListener("input",pintaExemploEmail);
 });
+// Mostra como o nome do perfil vira número de conta. O aviso de "novo" fica
+// até o campo ser preenchido com o que está GUARDADO (não o que está sendo digitado).
+function pintaNomePerfil(guardado){
+  var n=$("shNomePerfil").value.trim(), base=n||"shopee ";
+  $("shNomeEx").innerHTML="O perfil <b class=\"mono\">"+esc(base+"21")+"</b> é a conta 21"+
+    (n?" (e \"shopee 21\" continua valendo)":"")+".";
+  if(guardado!==undefined) $("shNomeAviso").hidden=!!String(guardado||"").trim();
+}
+$("shNomePerfil").addEventListener("input",function(){ pintaNomePerfil(); });
+pintaNomePerfil("");
 chave("chLogin",function(){});
 
 $("bTestarAds").onclick=function(){ pintaDiag(null,true); GANCHOS.testarAds(); };
@@ -3135,6 +3156,8 @@ window.TELA = {
       if (g === !!cx.dataset.guardada || cx.querySelector("input").value.trim() !== (cx._valor || "")) return;
       pintaSegredo(cx, g);
     });
+    if(a.nomePerfil!=null && document.activeElement!==$("shNomePerfil")) $("shNomePerfil").value=a.nomePerfil;
+    pintaNomePerfil(a.nomePerfil);
     if(a.emailPrefixo!=null) $("shPrefixo").value=a.emailPrefixo;
     if(a.emailPrefixoAlto!=null) $("shPrefixoAlto").value=a.emailPrefixoAlto;
     if(a.emailDominio!=null) $("shDominio").value=a.emailDominio;

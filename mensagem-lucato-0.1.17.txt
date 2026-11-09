@@ -1,0 +1,11 @@
+Já está no ar a *versão 0.1.17* do Esteira. É só abrir o app que ele atualiza sozinho.
+
+*O que você precisa fazer uma vez:* os seus perfis no AdsPower se chamam S21, S13 etc. Vá em *Ajustes > Contas da Shopee*, no campo *"Como os perfis se chamam no AdsPower"*, e escreva só a letra *S* (sem número). Tem um aviso amarelo ali lembrando disso até você preencher.
+
+Depois disso, o perfil S21 é a conta 21, o S13 é a conta 13, e assim por diante.
+
+*Na planilha:* na coluna ONDE FOI FEITO O PEDIDO, pode escrever do mesmo jeito do perfil (S21) ou "shopee 21". Os dois funcionam.
+
+*Importante:* o número do perfil precisa ser o mesmo do e-mail da conta. Ou seja, o perfil S21 tem que ser a conta lucatoshopee21@givmail.com. Se algum perfil estiver com número diferente do e-mail, vale corrigir o nome no AdsPower.
+
+Também corrigi o erro "Não consegui guardar" que apareceu na tela de Contas da Shopee. Aquilo era só a mensagem: os dados já tinham sido salvos.

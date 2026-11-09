@@ -84,8 +84,11 @@ export async function mapaDeContas({ forcar = false, aoLog = () => {} } = {}) {
     await dormir(1200);   // user/list é limitado a 1 req/s em alguns planos
   }
 
-  const { mapa, duplicadas } = agruparPerfis(todos);
+  const { mapa, duplicadas, semNumero } = agruparPerfis(todos);
   aoLog(`${mapa.size} perfis mapeados`);
+  if (semNumero > 0 && mapa.size === 0)
+    aoLog(`nenhum dos ${semNumero} perfis do AdsPower tem um nome que o Esteira reconhece como conta ` +
+          `(ex.: "${todos[0]?.name ?? ""}") — diga em Ajustes → Contas da Shopee como os perfis se chamam`);
   for (const [n, lista] of duplicadas)
     aoLog(`conta ${n}: ${lista.length} perfis com esse número (${lista.map((x) => x.userId).join(", ")}) — ` +
           `fora da rodada até sobrar um só`);
@@ -94,6 +97,9 @@ export async function mapaDeContas({ forcar = false, aoLog = () => {} } = {}) {
   cache.duplicadas = duplicadas;
   return cache;
 }
+
+/** O nome dos perfis mudou nos Ajustes: a próxima rodada varre de novo. */
+export function esquecerPerfis() { cache = null; }
 
 /**
  * As contas com mais de um perfil, SE a varredura já aconteceu nesta
