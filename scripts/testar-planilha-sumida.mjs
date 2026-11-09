@@ -52,7 +52,8 @@ async function planilha(caminho, contas) {
 const { construir } = await import("../aplicativo/ponte.mjs");
 const { iniciarColetor } = await import("../src/coletor.mjs");
 const { salvarAjustes, aplicarNoAmbiente } = await import("../src/ajustes.mjs");
-aplicarNoAmbiente(salvarAjustes({ shopeeSenha: "x", codigoChave: "y", emailPrefixo: "loja", emailDominio: "ex.com" }));
+aplicarNoAmbiente(salvarAjustes({ shopeeSenha: "x", codigoChave: "y", emailPrefixo: "loja", emailDominio: "ex.com",
+  adspowerBase: process.env.ADSPOWER_BASE }));   // o Ajuste vence o ambiente, como no app
 const coletor = await iniciarColetor({ porta: 39821 });
 const ponte = construir({ aoLog: () => {}, porta: 39821 });
 const des = async (p) => { const r = await p; if (r && r.ok === false) throw new Error(r.erro); return r && "ok" in r && "dado" in r ? r.dado : r; };

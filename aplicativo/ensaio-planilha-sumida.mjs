@@ -17,8 +17,7 @@ mkdirSync(join(dir, "estado"), { recursive: true });
 process.env.ESTADO_DIR = join(dir, "estado"); process.env.TRABALHO_DIR = join(dir, "trabalho");
 process.env.RECURSOS_DIR = join(import.meta.dirname, "..");
 process.env.PAUSA_REPETIR_MS = "60000";
-writeFileSync(join(dir, "estado", "ajustes.json"), JSON.stringify({ guiaConcluido: true, shopeeSenha: "x", codigoChave: "y",
-  emailPrefixo: "loja", emailDominio: "ex.com" }));
+
 app.setPath("userData", join(dir, "dados-electron"));
 
 // AdsPower de mentira: 200 perfis; abrir perfil falha (nada abre de verdade)
@@ -36,6 +35,9 @@ const ads = createServer((req, res) => {
 });
 await new Promise((r) => ads.listen(0, "127.0.0.1", r));
 process.env.ADSPOWER_BASE = `http://127.0.0.1:${ads.address().port}`;
+// o endereço vai nos Ajustes: eles vencem o ambiente, como no app
+writeFileSync(join(dir, "estado", "ajustes.json"), JSON.stringify({ guiaConcluido: true, shopeeSenha: "x", codigoChave: "y",
+  emailPrefixo: "loja", emailDominio: "ex.com", adspowerBase: process.env.ADSPOWER_BASE }));
 
 const DOWNLOADS = join(dir, "Downloads"); mkdirSync(DOWNLOADS);
 const original = join(DOWNLOADS, "modelo-esteira_filtrado (2).xlsx");

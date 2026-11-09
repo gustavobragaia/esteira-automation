@@ -1010,3 +1010,19 @@ e o teste de conexão diria "Conectado" mesmo assim.
 - Testes: `aplicativo/ensaio-nome-perfil.mjs` (AdsPower de mentira com perfis
   S…, salvar, recusar, persistir após recarregar e em processo novo, guia,
   apagar) e `aplicativo/ensaio-guia-contas.mjs`.
+
+## 09/11/2026 — v0.1.18: a chave do AdsPower vale na hora em que é salva
+
+O cliente colou a chave do AdsPower com o app aberto. O teste de conexão ficou
+verde e a coleta recusou com "AdsPower: Require api-key (code -1)".
+
+- `src/adspower.mjs` lia `ADSPOWER_BASE` e `ADSPOWER_API_KEY` uma vez, ao
+  carregar o módulo. O teste de conexão recebe a chave por parâmetro; a
+  varredura de perfis e a fila usavam a constante, vazia até reiniciar.
+- Agora são `baseAtual()` e `chaveAtual()`, lidas a cada chamada (também em
+  `src/fila.mjs`). Os Ajustes já viravam ambiente na hora do salvar.
+- Três testes apontavam o AdsPower de mentira só pelo ambiente e dependiam da
+  leitura única; passaram a gravar o endereço nos Ajustes, que vencem o
+  ambiente como no app.
+- Teste: `aplicativo/ensaio-chave-ao-vivo.mjs` (app abre sem chave, a chave
+  chega pela tela, a coleta acha o perfil). Sem a correção reproduz o erro.

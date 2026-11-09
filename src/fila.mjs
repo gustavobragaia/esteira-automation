@@ -9,7 +9,7 @@ import { resolve } from "node:path";
 import { existsSync, readFileSync, statSync } from "node:fs";
 // BASE e KEY vêm daqui também: duas cópias da mesma configuração já
 // custaram caro neste projeto.
-import { abrirPerfil, fecharPerfil, statusPerfil, BASE, KEY } from "./adspower.mjs";
+import { abrirPerfil, fecharPerfil, statusPerfil, baseAtual, chaveAtual } from "./adspower.mjs";
 import { soltarTrava } from "./trava-login.mjs";
 import { novoToken, limparToken, extensaoDaConta, liberarLogin, zerarLogins } from "./credenciais.mjs";
 import { emitir } from "./eventos.mjs";
@@ -51,9 +51,9 @@ const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
 const entre = (a, b) => a + Math.floor(Math.random() * (b - a));
 
 async function api(caminho, params = {}) {
-  const u = new URL(caminho, BASE);
+  const u = new URL(caminho, baseAtual());
   for (const [k, v] of Object.entries(params)) if (v != null) u.searchParams.set(k, v);
-  const r = await fetch(u, { headers: { Authorization: `Bearer ${KEY}` }, signal: AbortSignal.timeout(90_000) });
+  const r = await fetch(u, { headers: { Authorization: `Bearer ${chaveAtual()}` }, signal: AbortSignal.timeout(90_000) });
   const j = await r.json();
   if (j.code !== 0) throw new Error(`${j.msg} (code ${j.code})`);
   return j.data;

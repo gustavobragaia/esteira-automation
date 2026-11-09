@@ -1,12 +1,17 @@
 // Cliente da Local API do AdsPower.
 // Base configurável para poder apontar para um mock em testes.
 
-export const BASE = process.env.ADSPOWER_BASE ?? "http://local.adspower.net:50325";
-export const KEY = process.env.ADSPOWER_API_KEY ?? "";
+// Lidos A CADA CHAMADA, não ao carregar o módulo. Eram constantes, e o
+// cliente que colou a chave em Ajustes com o app aberto ficou com o teste de
+// conexão verde (ele recebe a chave direto) e a coleta recusada com
+// "Require api-key": o robô seguia com a chave vazia da hora em que o app
+// abriu, até reiniciar. (09/11/2026)
+export const baseAtual = () => process.env.ADSPOWER_BASE || "http://local.adspower.net:50325";
+export const chaveAtual = () => process.env.ADSPOWER_API_KEY ?? "";
 
 // A chave vai no header Authorization. Como query string (?api_key=) a
 // API responde "Require api-key" — descoberto na marra.
-async function chamar(caminho, params = {}, { base = BASE, chave = KEY } = {}) {
+async function chamar(caminho, params = {}, { base = baseAtual(), chave = chaveAtual() } = {}) {
   const u = new URL(caminho, base);
   for (const [k, v] of Object.entries(params)) if (v != null) u.searchParams.set(k, v);
 
@@ -114,7 +119,7 @@ async function comPaciencia(fn, tentativas = 3) {
 }
 
 /** @returns {{ok, etapa, titulo, comoResolver, verificado?, detalhe?}} */
-export async function diagnosticar({ base = BASE, chave = KEY } = {}) {
+export async function diagnosticar({ base = baseAtual(), chave = chaveAtual() } = {}) {
   // 1. O AdsPower está no ar? /status responde sem chave nenhuma.
   let status;
   try {
@@ -203,7 +208,7 @@ export async function diagnosticar({ base = BASE, chave = KEY } = {}) {
  * significa que qualquer programa rodando ali pode abrir e dirigir os
  * navegadores com as contas. É informação que o dono da máquina merece ter.
  */
-export async function apiAbertaSemChave({ base = BASE } = {}) {
+export async function apiAbertaSemChave({ base = baseAtual() } = {}) {
   try {
     const r = await fetch(new URL("/api/v1/user/list?page=1&page_size=1", base),
                           { signal: AbortSignal.timeout(8000) });

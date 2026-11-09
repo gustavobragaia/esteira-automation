@@ -20,7 +20,7 @@ process.env.RECURSOS_DIR = join(import.meta.dirname, "..");
 process.env.SHOPIFY_CONEXAO_ARQUIVO = join(dir, "conexao.json");
 process.env.REGISTRO_ESCRITAS = join(dir, "escritas.json");
 writeFileSync(process.env.SHOPIFY_CONEXAO_ARQUIVO, JSON.stringify({ loja: "loja-teste.myshopify.com", modo: "token-fixo", accessToken: "x" }));
-writeFileSync(join(dir, "estado", "ajustes.json"), JSON.stringify({ guiaConcluido: true }));
+
 app.setPath("userData", join(dir, "dados-electron"));
 
 const ano = new Date().getFullYear();
@@ -52,6 +52,8 @@ const ads = createServer((req, res) => {
 });
 await new Promise((r) => ads.listen(0, "127.0.0.1", r));
 process.env.ADSPOWER_BASE = `http://127.0.0.1:${ads.address().port}`;
+// o endereço vai nos Ajustes: eles vencem o ambiente, como no app
+writeFileSync(join(dir, "estado", "ajustes.json"), JSON.stringify({ guiaConcluido: true, adspowerBase: process.env.ADSPOWER_BASE }));
 
 await import("./principal.mjs");
 const { default: ExcelJS } = await import("../src/excel.mjs");
