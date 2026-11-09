@@ -12,7 +12,9 @@ SHOPIFY_CLIENT_ID = "d278ab9bc83df201d73436fb29b70f9d"   # público, não é seg
 # Lojas com app próprio (distribuição personalizada) — ver lib/apps.js.
 # Ex.: '{"loja.myshopify.com": "CHOMPS"}' + SHOPIFY_CLIENT_ID_CHOMPS aqui
 # + SHOPIFY_CLIENT_SECRET_CHOMPS como secret.
-SHOPIFY_LOJAS = '{"loja-sparta-store.myshopify.com": "SPARTA"}'
+SHOPIFY_LOJAS = '{"loja-sparta-store.myshopify.com":"SPARTA","jettashopoficial.myshopify.com":"JETTA"}'
+# jettashopoficial.myshopify.com — distribuição personalizada, segredo em SHOPIFY_CLIENT_SECRET_JETTA
+SHOPIFY_CLIENT_ID_JETTA = "eb1c620c676407ef18e9e730a8fd38f9"
 # App "Esteira Esparta", organização Partner GBS Media (gustavobragaia12),
 # distribuição personalizada para a loja acima — instalado em 21/10/2026
 # pelo link de instalação personalizado (o único caminho que funciona: o

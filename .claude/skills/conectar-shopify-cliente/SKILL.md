@@ -171,6 +171,7 @@ sem me perguntar" **desligado**, aprovando um pedido só na etapa 4.
 | Loja | NOME | App | Desde |
 |---|---|---|---|
 | loja-sparta-store.myshopify.com (Esparta Store) | SPARTA | Esteira Esparta (`25cb4e58…`) | 21/10/2026 |
+| jettashopoficial.myshopify.com (Jetta) | JETTA | Esteira Jetta (`eb1c620c…`) | 09/11/2026 (link gerado; instalação pendente) |
 | testeloja-4ajtpkll.myshopify.com (teste) | app principal | Esteira (`d278ab9b…`), org da loja | 18/10/2026 |
 
 Atualize esta tabela a cada cliente novo.
