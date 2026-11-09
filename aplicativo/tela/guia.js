@@ -440,8 +440,9 @@ var DEPOIS = {
         ["shopeeSenha","codigoChave"].forEach(function(k, i){
           var inp = $(i ? "gCodigo" : "gSenha");
           if (ajustes[k] !== "guardada") return;
-          var span = inp.parentNode.querySelector("span");
-          if (!span.querySelector(".g-guardada")) span.insertAdjacentHTML("beforeend", ' <b class="g-guardada">· guardada, não precisa digitar de novo</b>');
+          // o olho embrulha o input numa div: o rótulo fica no <label>, não no pai direto
+          var label = inp.closest("label"), span = label && label.querySelector("span");
+          if (span && !span.querySelector(".g-guardada")) span.insertAdjacentHTML("beforeend", ' <b class="g-guardada">· guardada, não precisa digitar de novo</b>');
         });
       } catch (e) {
         resultado(res, "er", '<span class="est er"><span class="pt"></span>Não consegui guardar</span>' + lista([e.message]));
