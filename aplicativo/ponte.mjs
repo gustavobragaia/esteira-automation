@@ -113,7 +113,7 @@ export function construir({ aoLog = () => {}, aoEvento: enviar, porta = 3000, ab
           d.nomesNaoReconhecidos = nomes.slice(0, 3);
           d.comoResolver = [...(d.comoResolver ?? []),
             `Os perfis se chamam "${nomes.slice(0, 2).join('", "')}" e o Esteira não sabe qual conta é cada um. ` +
-            `Em Ajustes → Contas da Shopee, diga como os perfis se chamam (ex.: "S" para S21, S22…).`];
+            `Em Ajustes → AdsPower, diga como os perfis se chamam (ex.: "S" para S21, S22…).`];
         }
       } catch { /* o teste de conexão já passou; isto é só um aviso a mais */ }
     }

@@ -104,11 +104,13 @@ app.whenReady().then(async () => {
   console.log("\n  digitando com número (errado)");
   await digitar("S21"); await espera(700);
   tudo &= ok((await pedir("ajustes:ler")).nomePerfil === "", "\"S21\" é recusado e nada é guardado");
-  tudo &= ok(await js(`document.body.innerText.includes("sem o número")`), "e a tela diz por quê");
+  tudo &= ok(await js(`/Não guardei:.*sem o número/.test((document.querySelector("#shNomePerfil")?.closest("label")?.querySelector(".aj-erro") || {}).textContent || "")`),
+    "e o motivo aparece embaixo do próprio campo");
 
   console.log("\n  digitando certo");
   await digitar("S"); await espera(700);
   tudo &= ok((await pedir("ajustes:ler")).nomePerfil === "S", "\"S\" é guardado");
+  tudo &= ok(await js(`!document.querySelector("#shNomePerfil").closest("label").querySelector(".aj-erro")`), "e o aviso de erro some");
   t = await tela();
   tudo &= ok(!t.aviso, "o aviso some depois de guardado");
   tudo &= ok(/S21 é a conta 21/.test(t.ex), `o exemplo mostra o perfil S21 (${t.ex})`);

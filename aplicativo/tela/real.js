@@ -102,16 +102,29 @@ async function ajustes(){
   if (!(Number(a.emailFaixa) > 0)) $("shFaixa").value = "";
   TELA.ajustes(a);
 
-  var gravar = function(){
+  // O motivo de uma recusa aparece EMBAIXO do campo que a causou. Só na
+  // notificação do sistema ele passava despercebido: a pessoa digitava "S21",
+  // nada era guardado e a tela não dizia nada. (0.1.19)
+  var erroNoCampo = function(inp, msg){
+    if (!inp) return;
+    var lab = inp.closest("label") || inp.parentNode;
+    var el = lab.querySelector(".aj-erro");
+    if (!msg) { if (el) el.remove(); inp.removeAttribute("aria-invalid"); return; }
+    if (!el) { el = document.createElement("span"); el.className = "aj-erro"; el.setAttribute("role", "alert"); lab.appendChild(el); }
+    el.textContent = "Não guardei: " + msg;
+    inp.setAttribute("aria-invalid", "true");
+  };
+  var gravar = function(ev){
+    var campo = ev && ev.target && ev.target.tagName === "INPUT" ? ev.target : null;
     var m = {};
     simples.forEach(function(par){ m[par[1]] = $(par[0]).value.trim(); });
     m.emailFaixa = Number($("shFaixa").value.trim()) || 0;
     m.loginAutomatico = $("chLogin").getAttribute("aria-pressed") === "true";
     pedir("ajustes:salvar", m)
-      .then(function(novo){ TELA.ajustes(novo); })
+      .then(function(novo){ erroNoCampo(campo, ""); TELA.ajustes(novo); })
       // Antes só ia para o console: a pessoa mudava o campo, nada era
       // guardado, e ela descobria no dia seguinte.
-      .catch(function(e){ TELA.avisar("Não consegui guardar o ajuste", e.message); });
+      .catch(function(e){ erroNoCampo(campo, e.message); TELA.avisar("Não consegui guardar o ajuste", e.message); });
   };
   simples.forEach(function(par){ $(par[0]).addEventListener("change", gravar); });
   $("chLogin").addEventListener("click", function(){ setTimeout(gravar, 0); });
@@ -141,6 +154,7 @@ function adspower(){
       TELA.diagnostico({
         ok: d.ok, titulo: d.titulo, provado: d.verificado,
         passos: d.comoResolver, abertaSemChave: d.abertaSemChave,
+        naoReconhecidos: d.nomesNaoReconhecidos,
       });
     } catch (e) {
       if (e.message === "prazo")
@@ -739,7 +753,8 @@ function avisos(){
     .then(function(d){ conexao.ads = !!d.ok; pintaConexao();
       // o mesmo resultado vai para o cartão do AdsPower em Ajustes
       TELA.diagnostico({ ok: d.ok, titulo: d.titulo, provado: d.verificado,
-        passos: d.comoResolver, abertaSemChave: d.abertaSemChave }); })
+        passos: d.comoResolver, abertaSemChave: d.abertaSemChave,
+        naoReconhecidos: d.nomesNaoReconhecidos }); })
     .catch(function(){ conexao.ads = false; pintaConexao(); });
   var selo = document.querySelector(".selo-proto");
   if (!selo) return;

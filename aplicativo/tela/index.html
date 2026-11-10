@@ -382,6 +382,40 @@ td.dir,th.dir{text-align:right;font-variant-numeric:tabular-nums}
 .escopo svg{width:11px;height:11px;stroke:var(--ok);fill:none;stroke-width:2.6;flex:none}
 .duplo{display:grid;gap:26px}
 @media(min-width:900px){.duplo{grid-template-columns:1fr 1fr;align-items:start}}
+/* Ajustes (0.1.19): três cartões de conexão no topo; cada um abre uma gaveta
+   lateral com a configuração. O que falta fica com a borda do estado. */
+.aj-cartoes{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:26px}
+.aj-cartao{border:1px solid var(--linha);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:9px;align-items:flex-start}
+.aj-cartao.at{border-color:var(--atencao);background:var(--sup-1)}
+.aj-cartao.er{border-color:var(--erro);background:var(--sup-1)}
+.aj-cab{display:flex;align-items:center;gap:10px}
+.aj-cab h2{margin:0;font:500 14px/1.2 var(--ui);color:var(--tinta)}
+.aj-cab img.ads,.aj-cab .lg,.aj-gcab img.ads,.aj-gcab .lg{width:22px;height:22px;border-radius:5px}
+.aj-cartao .est{font-size:12.5px;font-weight:500;white-space:normal}
+.aj-det{margin:0;font-size:12px;color:var(--tinta-2);line-height:1.5;flex-grow:1;overflow-wrap:anywhere}
+.aj-prefs{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:start}
+.aj-grupo{border:1px solid var(--linha);border-radius:14px;padding:16px 20px 6px}
+.aj-grupo h3,.aj-h3{margin:0 0 8px;font:500 11px/1.3 var(--ui);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2)}
+.aj-grupo h3+.op{border-top:none;padding-top:4px}
+.aj-link{border-top:1px solid var(--linha);padding:13px 0 12px}
+.aj-link .campo{margin-bottom:0}
+.aj-ajuda{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
+.aj-veu{position:fixed;inset:0;background:rgba(1,1,2,.55);z-index:40}
+.aj-gaveta{position:fixed;top:0;right:0;bottom:0;width:min(480px,100vw);box-sizing:border-box;background:var(--canvas);
+  border-left:1px solid var(--linha);z-index:41;display:flex;flex-direction:column;box-shadow:0 24px 60px -24px rgba(0,0,0,.45)}
+.aj-gaveta[hidden],.aj-veu[hidden]{display:none}
+.aj-gcab{display:flex;align-items:center;gap:10px;padding:20px 24px;border-bottom:1px solid var(--linha)}
+.aj-gcab h2{margin:0;flex-grow:1;font:600 16px/1.2 var(--ui)}
+.aj-gcorpo{padding:20px 24px 28px;overflow-y:auto;flex-grow:1}
+.aj-gcorpo .campo{max-width:none}
+.aj-sep{border-top:1px solid var(--linha);margin:20px 0}
+.campo .aj-erro{display:block;color:var(--erro);font-size:12px;margin:6px 0 0}
+.campo input[aria-invalid="true"]{border-color:var(--erro)}
+.aj-mais{margin-top:16px}
+.aj-mais summary{cursor:pointer;color:var(--tinta-2);font-size:12.5px}
+.aj-mais[open] summary{margin-bottom:12px}
+@media (prefers-reduced-motion:no-preference){.aj-gaveta:not([hidden]){animation:aj-entra .16s ease-out}}
+@keyframes aj-entra{from{transform:translateX(24px);opacity:.6}to{transform:none;opacity:1}}
 
 /* ══ Histórico ══ */
 .filtros{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
@@ -1311,80 +1345,76 @@ details.cred summary:hover{color:var(--tinta)}
 
 <!-- ═══ AJUSTES ═══ -->
 <section id="t-ajustes" hidden>
-  <div class="topo"><div><h1>Ajustes</h1><p>Mexe-se uma vez e esquece.</p></div></div>
+  <div class="topo"><div><h1>Ajustes</h1><p>As três conexões do robô primeiro. Clique numa para configurar.</p></div></div>
 
-  <div class="duplo">
-    <div>
-      <div class="bloco">
-        <div class="rotulo"><h2>Avisos</h2></div>
-        <div class="op"><div><div class="t">Tocar um som</div>
-          <div class="d">Quando uma conta pedir verificação humana e quando a coleta terminar.</div></div>
-          <button class="chave" id="chSom" aria-pressed="true" aria-label="Som"></button></div>
-        <div class="op"><div><div class="t">Avisar pelo sistema</div>
-          <div class="d">Notificação do computador, pra quando a janela estiver atrás de outra.</div></div>
-          <button class="chave" id="chNot" aria-pressed="true" aria-label="Notificação"></button></div>
-        <div class="op"><div><div class="t">Escrever sem me perguntar</div>
-          <div class="d">Desligado, a escrita espera sua aprovação na etapa 4. Ligue quando confiar
-            no resultado — dá para voltar atrás a qualquer momento.</div></div>
-          <button class="chave" id="chDireto" aria-pressed="false" aria-label="Escrita direta"></button></div>
-        <div class="op" style="opacity:.5"><div><div class="t">Avisar o cliente final
-          <span class="ter" style="font-weight:400">· ainda não</span></div>
-          <div class="d">Deixaria a Shopify mandar o e-mail de “pedido enviado”. Fora do escopo
-            por enquanto.</div></div>
-          <button class="chave" id="chCliente" aria-pressed="false" disabled></button></div>
-        <div class="op"><div><div class="t">Testar o aviso</div>
-          <div class="d">Toca o som e dispara a notificação, pra conferir que funciona antes de precisar.</div></div>
-          <button class="btn" id="bTestar">Testar</button></div>
-      </div>
+  <div class="aj-cartoes">
+    <article class="aj-cartao" id="cAds">
+      <div class="aj-cab"><img class="ads" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEGElEQVRYCb2X229UZRTFV6cXKFIoBQsClXK/h6JgQowhxhLfDOH64KPhAeOfwwOPPKO8mfAgAdSEEoIFFNsosUVuStUCpYUWaMf1m83AtM75hpowO5nJnHO+b+211758Z2quXMvnjxyXun6Snj5TVaw2J21dK32+T6o7ekI684P05GlVfL9wQsBj9lnT8Wk+Pzj04n5Vf6BE7tl4VX1OcjY+YQKT7ky5yNVMuTHdy7wlroCRSYCNW9ZI69sDxFjTMvYvXyKtbvP+xM5MAuzZuEI6vFfa+Y40s17KvwIL1jR47bb10oFOaYVJpCxJgCgA+OwTad9H0vy5aRI4nztb2vWetHuntPjNyimoS7HjGaAtc6Q9H0pLDPjVaanvdvldbYukzu3S5lWhwoSLrJJVJAAAJGZY1g86pNYW6YRJXOx9OTvqjUK6Oh352yaBcuzJWd+6WgNQBL4uZ69EoLgRYIry0G7Lu0D65oJEK+3YHORaSlJUb8e1OMcynPNoWgQKWAZbaBUO7pJWLpX+eSCtbZcaGyJqSDYYleiZdJXmTJIAygFYzhbNj8K8+ps0/DiiRXbSgY09CXXiKvs7kwBg9x9KowZqnBHRAcP4bG6SFjRHDUCQgUVtwJWxPjrmH77gfBl+lMxAOgXfX5GaZkkf74hOoL9x3OxWI784gEC977Nu1sxw/Nc9ic+5H6XLv/pewhxPtg06v1+64o99HWrQhrRksbgK+bZzVBn3mULFUx+k4ZQLlM/QSDY+T5IEWEAqHlrGO38HGNdFgwC9Tr4nfJ+OuD0gXbsRZFCFNSnLrAE2MdVosW0bApzeX9cuLV8cUeK8+BIDid4+qac/ipI1pIQUQAqC5SxJgIn2/pZoK/Y/dnH9/me0VtvCl9ENON8371opy114yXDURE6nvLsu7t9zQZdTI5MAi2c3RqQ4ZxI2vRER9zjSgUGP5lZHfV06eU5a5gnIcCp1gvqNVoEizbJMAmzAMYBIyYf2GnHPIyfnwcku6axf54huqcmUHbmAJCxJgOqe46iZbMjLTMDoDlqs+xfp0WiodNeKtM4LpSr4DJDn30kCDCCGzP3hkJ7Ib/whfdvtSr8ZtYBCjNufPRGZC5tWxkyY5CVxkSRAxA/snNYDnLH73SWJaLHSfFN8hQ5wy3b4TYqBVVOxySscRkRG1EMmcf6qdKEnRmup46AS37TldSs04rRAgqO5UBeli6b8TipA5Lfcw0Td2x9pyHJeikuHdLlGOKTeciumLEmg71Y4ZpCYyyTJU6CQZHp2e3DRqsXiLbcnkwDR992JFBhv2gYJ6qLfGFiWcpkE2ASJ/+OcvUUDI2W5wjtbasVrfMZbU267D5riW8xr9PUfaIbcVndKHX886HH+rXKmV8OInH9dX+yX/gVFgFpEoEAJCwAAAABJRU5ErkJggg==" alt=""><h2>AdsPower</h2></div>
+      <span class="est" id="cAdsEst"><span class="pt"></span>Conferindo…</span>
+      <p class="aj-det" id="cAdsDet">Testando a conexão com o AdsPower.</p>
+      <button class="btn" data-gaveta="gAds" id="bGavAds">Configurar</button>
+    </article>
+    <article class="aj-cartao" id="cShopee">
+      <div class="aj-cab"><svg class="lg shopee" viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M15.9414 17.9633c.229-1.879-.981-3.077-4.1758-4.0969-1.548-.528-2.277-1.22-2.26-2.1719.065-1.056 1.048-1.825 2.352-1.85a5.2898 5.2898 0 0 1 2.8838.89c.116.072.197.06.263-.039.09-.145.315-.494.39-.62.051-.081.061-.187-.068-.281-.185-.1369-.704-.4149-.983-.5319a6.4697 6.4697 0 0 0-2.5118-.514c-1.909.008-3.4129 1.215-3.5389 2.826-.082 1.1629.494 2.1078 1.73 2.8278.262.152 1.6799.716 2.2438.892 1.774.552 2.695 1.5419 2.478 2.6969-.197 1.047-1.299 1.7239-2.818 1.7439-1.2039-.046-2.2878-.537-3.1278-1.19l-.141-.11c-.104-.08-.218-.075-.287.03-.05.077-.376.547-.458.67-.077.108-.035.168.045.234.35.293.817.613 1.134.775a6.7097 6.7097 0 0 0 2.8289.727 4.9048 4.9048 0 0 0 2.0759-.354c1.095-.465 1.8029-1.394 1.9449-2.554zM11.9986 1.4009c-2.068 0-3.7539 1.95-3.8329 4.3899h7.6657c-.08-2.44-1.765-4.3899-3.8328-4.3899zm7.8516 22.5981-.08.001-15.7843-.002c-1.074-.04-1.863-.91-1.971-1.991l-.01-.195L1.298 6.2858a.459.459 0 0 1 .45-.494h4.9748C6.8448 2.568 9.1607 0 11.9996 0c2.8388 0 5.1537 2.5689 5.2757 5.7898h4.9678a.459.459 0 0 1 .458.483l-.773 15.5883-.007.131c-.094 1.094-.979 1.9769-2.0709 2.0059z"/></svg><h2>Login da Shopee</h2></div>
+      <span class="est" id="cShopeeEst"><span class="pt"></span>—</span>
+      <p class="aj-det" id="cShopeeDet"></p>
+      <button class="btn" data-gaveta="gShopee" id="bGavShopee">Configurar</button>
+    </article>
+    <article class="aj-cartao" id="cShopify">
+      <div class="aj-cab"><svg class="lg shopify" viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></svg><h2>Shopify</h2></div>
+      <span class="est" id="cShopifyEst"><span class="pt"></span>—</span>
+      <p class="aj-det" id="cShopifyDet"></p>
+      <button class="btn" data-gaveta="gShopify" id="bGavShopify">Configurar</button>
+    </article>
+  </div>
 
-      <div class="bloco" id="blLink">
-        <div class="rotulo"><h2>Rastreio no pedido</h2></div>
-        <label class="campo" style="display:block"><span>Link de rastreio</span>
+  <div class="aj-prefs">
+    <div class="aj-grupo">
+      <h3>Rodada</h3>
+      <div class="op"><div><div class="t">Escrever sem me perguntar</div>
+        <div class="d">Desligado, a escrita espera sua aprovação na etapa 4.</div></div>
+        <button class="chave" id="chDireto" aria-pressed="false" aria-label="Escrever sem me perguntar"></button></div>
+      <div class="op"><div><div class="t">Entrar sozinho quando a sessão cair</div>
+        <div class="d">Desligado, a conta vai para a etapa 3 esperando você.</div></div>
+        <button class="chave" id="chLogin" role="switch" aria-pressed="true" aria-label="Entrar sozinho quando a sessão cair"></button></div>
+      <div id="blLink" class="aj-link">
+        <label class="campo" style="display:block"><span>Link de rastreio no pedido</span>
           <input id="ajLink" spellcheck="false" placeholder="https://parcelsapp.com/pt/tracking">
-          <em>O site que abre quando o cliente clica no rastreio. O código vai no fim do endereço
-            (ou onde estiver escrito <b>{codigo}</b>). Em branco, vale o parcelsapp.</em></label>
-        <p class="ter" style="font-size:12px;margin:6px 0 14px">Fica assim: <span class="mono" id="ajLinkEx">—</span></p>
-        <div class="op"><div><div class="t">Corrigir o link dos pedidos já escritos</div>
-          <div class="d">Troca o link antigo (o dos Correios, que parou de funcionar) pelo de cima, nos pedidos
-            que o robô já escreveu na Shopify. Os códigos ficam os mesmos, o cliente não recebe aviso, e link
-            que você colocou à mão não é mexido.</div></div>
-          <button class="btn" id="bConferirLinks">Conferir</button></div>
-        <div class="aviso" id="linksRes" hidden style="margin-top:10px">
-          <svg viewBox="0 0 24 24"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
-          <span id="linksTxt"></span>
-          <span id="linksBotoes" hidden style="margin-left:8px">
-            <button class="btn peq pri" id="bCorrigirLinks">Trocar</button>
-            <button class="btn peq" id="bCancelarLinks">Cancelar</button></span></div>
+          <em>Em branco, vale o parcelsapp. O código vai no fim (ou onde estiver <b>{codigo}</b>).</em></label>
+        <p class="ter" style="font-size:12px;margin:6px 0 0">Fica assim: <span class="mono" id="ajLinkEx">—</span></p>
       </div>
-
-      <div class="bloco">
-        <div class="rotulo"><h2>Primeiros passos</h2></div>
-        <div class="op"><div><div class="t">O guia de configuração</div>
-          <div class="d">O passo a passo que abre na primeira vez: AdsPower, contas da Shopee,
-            Shopify e como a esteira anda.</div></div>
-          <button class="btn" id="bAbrirGuia">Abrir o guia</button></div>
-        <div class="op"><div><div class="t">Exportar diagnóstico</div>
-          <div class="d">Um arquivo com o que aconteceu nos últimos dias (avisos, contas que falharam
-            e o registro do robô), para mandar a quem dá suporte. Não leva senha, chaves nem dados
-            dos seus clientes.</div></div>
-          <button class="btn" id="bDiagnostico">Exportar</button></div>
-      </div>
-
-      <div class="bloco">
-        <div class="rotulo"><h2>Aparência</h2></div>
-        <div class="op"><div><div class="t">Tema</div>
-          <div class="d">Segue o sistema se você não escolher.</div></div>
-          <div class="seg" style="margin-left:auto" role="group" aria-label="Tema">
+    </div>
+    <div class="aj-grupo">
+      <h3>Avisos e aparência</h3>
+      <div class="op"><div><div class="t">Tocar um som</div>
+        <div class="d">Quando uma conta pedir você e quando a coleta terminar.</div></div>
+        <button class="chave" id="chSom" aria-pressed="true" aria-label="Tocar um som"></button></div>
+      <div class="op"><div><div class="t">Avisar pelo sistema</div>
+        <div class="d">Notificação do computador, para quando a janela estiver atrás de outra.</div></div>
+        <button class="btn peq" id="bTestar">Testar</button>
+        <button class="chave" id="chNot" aria-pressed="true" aria-label="Avisar pelo sistema"></button></div>
+      <div class="op"><div><div class="t">Tema</div></div>
+        <div class="seg" style="margin-left:auto" role="group" aria-label="Tema">
             <button id="tSis" aria-pressed="true">Sistema</button>
             <button id="tLuz" aria-pressed="false">Claro</button>
             <button id="tEsc" aria-pressed="false">Escuro</button></div></div>
-      </div>
+      <button class="chave" id="chCliente" aria-pressed="false" disabled hidden></button>
     </div>
+  </div>
 
-    <div>
-      <div class="bloco">
-        <div class="rotulo"><h2><img class="ads" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEGElEQVRYCb2X229UZRTFV6cXKFIoBQsClXK/h6JgQowhxhLfDOH64KPhAeOfwwOPPKO8mfAgAdSEEoIFFNsosUVuStUCpYUWaMf1m83AtM75hpowO5nJnHO+b+211758Z2quXMvnjxyXun6Snj5TVaw2J21dK32+T6o7ekI684P05GlVfL9wQsBj9lnT8Wk+Pzj04n5Vf6BE7tl4VX1OcjY+YQKT7ky5yNVMuTHdy7wlroCRSYCNW9ZI69sDxFjTMvYvXyKtbvP+xM5MAuzZuEI6vFfa+Y40s17KvwIL1jR47bb10oFOaYVJpCxJgCgA+OwTad9H0vy5aRI4nztb2vWetHuntPjNyimoS7HjGaAtc6Q9H0pLDPjVaanvdvldbYukzu3S5lWhwoSLrJJVJAAAJGZY1g86pNYW6YRJXOx9OTvqjUK6Oh352yaBcuzJWd+6WgNQBL4uZ69EoLgRYIry0G7Lu0D65oJEK+3YHORaSlJUb8e1OMcynPNoWgQKWAZbaBUO7pJWLpX+eSCtbZcaGyJqSDYYleiZdJXmTJIAygFYzhbNj8K8+ps0/DiiRXbSgY09CXXiKvs7kwBg9x9KowZqnBHRAcP4bG6SFjRHDUCQgUVtwJWxPjrmH77gfBl+lMxAOgXfX5GaZkkf74hOoL9x3OxWI784gEC977Nu1sxw/Nc9ic+5H6XLv/pewhxPtg06v1+64o99HWrQhrRksbgK+bZzVBn3mULFUx+k4ZQLlM/QSDY+T5IEWEAqHlrGO38HGNdFgwC9Tr4nfJ+OuD0gXbsRZFCFNSnLrAE2MdVosW0bApzeX9cuLV8cUeK8+BIDid4+qac/ipI1pIQUQAqC5SxJgIn2/pZoK/Y/dnH9/me0VtvCl9ENON8371opy114yXDURE6nvLsu7t9zQZdTI5MAi2c3RqQ4ZxI2vRER9zjSgUGP5lZHfV06eU5a5gnIcCp1gvqNVoEizbJMAmzAMYBIyYf2GnHPIyfnwcku6axf54huqcmUHbmAJCxJgOqe46iZbMjLTMDoDlqs+xfp0WiodNeKtM4LpSr4DJDn30kCDCCGzP3hkJ7Ib/whfdvtSr8ZtYBCjNufPRGZC5tWxkyY5CVxkSRAxA/snNYDnLH73SWJaLHSfFN8hQ5wy3b4TYqBVVOxySscRkRG1EMmcf6qdKEnRmup46AS37TldSs04rRAgqO5UBeli6b8TipA5Lfcw0Td2x9pyHJeikuHdLlGOKTeciumLEmg71Y4ZpCYyyTJU6CQZHp2e3DRqsXiLbcnkwDR992JFBhv2gYJ6qLfGFiWcpkE2ASJ/+OcvUUDI2W5wjtbasVrfMZbU267D5riW8xr9PUfaIbcVndKHX886HH+rXKmV8OInH9dX+yX/gVFgFpEoEAJCwAAAABJRU5ErkJggg==" alt="">AdsPower</h2></div>
-        <div class="segredo" data-segredo="adspowerChave">
+  <p class="aj-ajuda">
+    <button class="btn" id="bAbrirGuia">Abrir o guia de configuração</button>
+    <button class="btn" id="bDiagnostico">Exportar diagnóstico</button>
+    <button class="btn" data-gaveta="gAvancado" id="bGavAvancado">Avançado</button>
+  </p>
+
+  <div class="aj-veu" id="ajVeu" hidden></div>
+
+  <aside class="aj-gaveta" id="gAds" role="dialog" aria-modal="true" aria-labelledby="gAdsT" hidden>
+    <div class="aj-gcab"><img class="ads" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEGElEQVRYCb2X229UZRTFV6cXKFIoBQsClXK/h6JgQowhxhLfDOH64KPhAeOfwwOPPKO8mfAgAdSEEoIFFNsosUVuStUCpYUWaMf1m83AtM75hpowO5nJnHO+b+211758Z2quXMvnjxyXun6Snj5TVaw2J21dK32+T6o7ekI684P05GlVfL9wQsBj9lnT8Wk+Pzj04n5Vf6BE7tl4VX1OcjY+YQKT7ky5yNVMuTHdy7wlroCRSYCNW9ZI69sDxFjTMvYvXyKtbvP+xM5MAuzZuEI6vFfa+Y40s17KvwIL1jR47bb10oFOaYVJpCxJgCgA+OwTad9H0vy5aRI4nztb2vWetHuntPjNyimoS7HjGaAtc6Q9H0pLDPjVaanvdvldbYukzu3S5lWhwoSLrJJVJAAAJGZY1g86pNYW6YRJXOx9OTvqjUK6Oh352yaBcuzJWd+6WgNQBL4uZ69EoLgRYIry0G7Lu0D65oJEK+3YHORaSlJUb8e1OMcynPNoWgQKWAZbaBUO7pJWLpX+eSCtbZcaGyJqSDYYleiZdJXmTJIAygFYzhbNj8K8+ps0/DiiRXbSgY09CXXiKvs7kwBg9x9KowZqnBHRAcP4bG6SFjRHDUCQgUVtwJWxPjrmH77gfBl+lMxAOgXfX5GaZkkf74hOoL9x3OxWI784gEC977Nu1sxw/Nc9ic+5H6XLv/pewhxPtg06v1+64o99HWrQhrRksbgK+bZzVBn3mULFUx+k4ZQLlM/QSDY+T5IEWEAqHlrGO38HGNdFgwC9Tr4nfJ+OuD0gXbsRZFCFNSnLrAE2MdVosW0bApzeX9cuLV8cUeK8+BIDid4+qac/ipI1pIQUQAqC5SxJgIn2/pZoK/Y/dnH9/me0VtvCl9ENON8371opy114yXDURE6nvLsu7t9zQZdTI5MAi2c3RqQ4ZxI2vRER9zjSgUGP5lZHfV06eU5a5gnIcCp1gvqNVoEizbJMAmzAMYBIyYf2GnHPIyfnwcku6axf54huqcmUHbmAJCxJgOqe46iZbMjLTMDoDlqs+xfp0WiodNeKtM4LpSr4DJDn30kCDCCGzP3hkJ7Ib/whfdvtSr8ZtYBCjNufPRGZC5tWxkyY5CVxkSRAxA/snNYDnLH73SWJaLHSfFN8hQ5wy3b4TYqBVVOxySscRkRG1EMmcf6qdKEnRmup46AS37TldSs04rRAgqO5UBeli6b8TipA5Lfcw0Td2x9pyHJeikuHdLlGOKTeciumLEmg71Y4ZpCYyyTJU6CQZHp2e3DRqsXiLbcnkwDR992JFBhv2gYJ6qLfGFiWcpkE2ASJ/+OcvUUDI2W5wjtbasVrfMZbU267D5riW8xr9PUfaIbcVndKHX886HH+rXKmV8OInH9dX+yX/gVFgFpEoEAJCwAAAABJRU5ErkJggg==" alt=""><h2 id="gAdsT">AdsPower</h2>
+      <button class="btn olho" data-fechar aria-label="Fechar" title="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="aj-gcorpo">
+      <div class="segredo" data-segredo="adspowerChave">
           <span class="rot">Chave da API</span>
           <div class="guardado" hidden>
             <span class="est ok"><span class="pt"></span>Guardada neste computador — não precisa digitar de novo</span>
@@ -1399,66 +1429,58 @@ details.cred summary:hover{color:var(--tinta)}
           <em>No AdsPower: Configurações → API local → copiar a chave. É ela que deixa
             o Esteira abrir os perfis.</em>
         </div>
+      <button class="btn pri" id="bTestarAds">Testar conexão</button>
+      <div id="adsResultado" style="margin-top:14px"></div>
+
+      <div class="aj-sep"></div>
+      <label class="campo"><span>Como os perfis se chamam</span>
+        <input id="shNomePerfil" spellcheck="false" placeholder="shopee" style="max-width:220px">
+        <em>Só o começo do nome, sem o número. Em branco, vale "shopee 21".</em></label>
+      <p class="nota" id="shNomeEx" style="margin-top:2px"></p>
+      <div class="aviso" id="shNomeAviso" style="margin:8px 0 0">
+        <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        <span><b>Confira o nome dos seus perfis.</b> O robô acha cada conta pelo nome do perfil.
+          Se os seus se chamam <b>S21</b>, <b>S22</b>…, escreva <b>S</b> acima. Na planilha, a coluna
+          ONDE FOI FEITO O PEDIDO pode usar o mesmo nome (S21) ou "shopee 21".</span></div>
+
+      <details class="aj-mais"><summary>Avançado · endereço da API local</summary>
         <label class="campo"><span>Endereço</span>
           <input id="adsBase" value="http://local.adspower.net:50325" spellcheck="false">
           <em>A porta padrão é 50325. Só mude se você mudou lá.</em></label>
-        <button class="btn pri" id="bTestarAds">Testar conexão</button>
-        <div id="adsResultado" style="margin-top:14px"></div>
-        <p class="nota">O AdsPower precisa estar <b>aberto</b> para a conexão existir —
-          ela some quando você fecha o programa.</p>
+      </details>
+      <p class="nota">O AdsPower precisa estar <b>aberto</b> para a conexão existir.</p>
+    </div>
+  </aside>
+
+  <aside class="aj-gaveta" id="gShopee" role="dialog" aria-modal="true" aria-labelledby="gShopeeT" hidden>
+    <div class="aj-gcab"><svg class="lg shopee" viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M15.9414 17.9633c.229-1.879-.981-3.077-4.1758-4.0969-1.548-.528-2.277-1.22-2.26-2.1719.065-1.056 1.048-1.825 2.352-1.85a5.2898 5.2898 0 0 1 2.8838.89c.116.072.197.06.263-.039.09-.145.315-.494.39-.62.051-.081.061-.187-.068-.281-.185-.1369-.704-.4149-.983-.5319a6.4697 6.4697 0 0 0-2.5118-.514c-1.909.008-3.4129 1.215-3.5389 2.826-.082 1.1629.494 2.1078 1.73 2.8278.262.152 1.6799.716 2.2438.892 1.774.552 2.695 1.5419 2.478 2.6969-.197 1.047-1.299 1.7239-2.818 1.7439-1.2039-.046-2.2878-.537-3.1278-1.19l-.141-.11c-.104-.08-.218-.075-.287.03-.05.077-.376.547-.458.67-.077.108-.035.168.045.234.35.293.817.613 1.134.775a6.7097 6.7097 0 0 0 2.8289.727 4.9048 4.9048 0 0 0 2.0759-.354c1.095-.465 1.8029-1.394 1.9449-2.554zM11.9986 1.4009c-2.068 0-3.7539 1.95-3.8329 4.3899h7.6657c-.08-2.44-1.765-4.3899-3.8328-4.3899zm7.8516 22.5981-.08.001-15.7843-.002c-1.074-.04-1.863-.91-1.971-1.991l-.01-.195L1.298 6.2858a.459.459 0 0 1 .45-.494h4.9748C6.8448 2.568 9.1607 0 11.9996 0c2.8388 0 5.1537 2.5689 5.2757 5.7898h4.9678a.459.459 0 0 1 .458.483l-.773 15.5883-.007.131c-.094 1.094-.979 1.9769-2.0709 2.0059z"/></svg><h2 id="gShopeeT">Login das contas da Shopee</h2>
+      <button class="btn olho" data-fechar aria-label="Fechar" title="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="aj-gcorpo">
+      <p class="nota" style="margin:0 0 14px">Só é usado quando a sessão de uma conta cai: aí o robô entra
+        sozinho com o e-mail, a senha e o código que a Shopee manda por e-mail.</p>
+      <div class="par-campos">
+        <label class="campo"><span>Começo do e-mail</span>
+          <input id="shPrefixo" spellcheck="false" placeholder="ex.: minhaloja">
+          <em>O que vem antes do número da conta.</em></label>
+        <label class="campo"><span>Domínio</span>
+          <input id="shDominio" spellcheck="false" placeholder="ex.: gmail.com"></label>
       </div>
-
-      <div class="bloco">
-        <div class="rotulo"><h2><svg class="lg shopee" viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M15.9414 17.9633c.229-1.879-.981-3.077-4.1758-4.0969-1.548-.528-2.277-1.22-2.26-2.1719.065-1.056 1.048-1.825 2.352-1.85a5.2898 5.2898 0 0 1 2.8838.89c.116.072.197.06.263-.039.09-.145.315-.494.39-.62.051-.081.061-.187-.068-.281-.185-.1369-.704-.4149-.983-.5319a6.4697 6.4697 0 0 0-2.5118-.514c-1.909.008-3.4129 1.215-3.5389 2.826-.082 1.1629.494 2.1078 1.73 2.8278.262.152 1.6799.716 2.2438.892 1.774.552 2.695 1.5419 2.478 2.6969-.197 1.047-1.299 1.7239-2.818 1.7439-1.2039-.046-2.2878-.537-3.1278-1.19l-.141-.11c-.104-.08-.218-.075-.287.03-.05.077-.376.547-.458.67-.077.108-.035.168.045.234.35.293.817.613 1.134.775a6.7097 6.7097 0 0 0 2.8289.727 4.9048 4.9048 0 0 0 2.0759-.354c1.095-.465 1.8029-1.394 1.9449-2.554zM11.9986 1.4009c-2.068 0-3.7539 1.95-3.8329 4.3899h7.6657c-.08-2.44-1.765-4.3899-3.8328-4.3899zm7.8516 22.5981-.08.001-15.7843-.002c-1.074-.04-1.863-.91-1.971-1.991l-.01-.195L1.298 6.2858a.459.459 0 0 1 .45-.494h4.9748C6.8448 2.568 9.1607 0 11.9996 0c2.8388 0 5.1537 2.5689 5.2757 5.7898h4.9678a.459.459 0 0 1 .458.483l-.773 15.5883-.007.131c-.094 1.094-.979 1.9769-2.0709 2.0059z"/></svg>Contas da Shopee</h2></div>
-        <p class="nota" style="margin:0 0 6px">No dia a dia o robô não usa nada disto:
-          as contas já estão conectadas dentro dos perfis do AdsPower, e ele só abre e lê.
-          <b>Isto aqui é para quando uma sessão cai.</b> Aí ele precisa entrar como você
-          entraria, e para isso precisa de três coisas, nesta ordem:</p>
-        <ol class="passos-login">
-          <li><b>O e-mail da conta.</b> Ele não guarda 80 e-mails: monta cada um a partir
-            do número da conta, seguindo o padrão que você define abaixo.</li>
-          <li><b>A senha.</b> A mesma para todas as contas.</li>
-          <li><b>O código que a Shopee manda por e-mail</b> depois da senha. Para ler esse
-            e-mail, ele usa um serviço de caixa de entrada — a terceira chave.</li>
-        </ol>
-        <p class="nota" style="margin:0 0 16px">Se faltar qualquer uma, o robô não consegue
-          entrar: a conta vai para a etapa 3 esperando você.</p>
-
-        <label class="campo"><span>Como os perfis se chamam no AdsPower</span>
-          <input id="shNomePerfil" spellcheck="false" placeholder="shopee" style="max-width:220px">
-          <em>Só o começo do nome, sem o número. Em branco, vale "shopee 21".</em></label>
-        <p class="nota" id="shNomeEx" style="margin-top:2px"></p>
-        <div class="aviso" id="shNomeAviso" style="margin:8px 0 16px">
-          <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
-          <span><b>Novo na versão 0.1.17: confira o nome dos seus perfis.</b> O robô acha cada conta
-            pelo nome do perfil no AdsPower. Se os seus se chamam, por exemplo, <b>S21</b>, <b>S22</b>…,
-            escreva <b>S</b> no campo acima. Sem isso, ele não encontra nenhum perfil. Na planilha,
-            a coluna ONDE FOI FEITO O PEDIDO pode usar o mesmo nome do perfil (S21) ou "shopee 21".</span></div>
-
+      <details class="aj-mais" id="shDois"><summary>Contas a partir de um número usam outro começo?</summary>
         <div class="par-campos">
-          <label class="campo"><span>1 · Começo do e-mail</span>
-            <input id="shPrefixo" spellcheck="false" placeholder="ex.: minhaloja">
-            <em>O que vem antes do número da conta.</em></label>
-          <label class="campo"><span>Domínio</span>
-            <input id="shDominio" spellcheck="false" placeholder="ex.: gmail.com"></label>
-        </div>
-
-        <div class="par-campos">
-          <label class="campo"><span>Outro começo a partir de</span>
+          <label class="campo"><span>A partir da conta</span>
             <input id="shFaixa" class="curto" inputmode="numeric" placeholder="200">
-            <em>Deixe em branco se todas as contas usam o mesmo.</em></label>
+            <em>Em branco se todas usam o mesmo.</em></label>
           <label class="campo"><span>Esse outro começo</span>
             <input id="shPrefixoAlto" spellcheck="false" placeholder="ex.: outraloja"></label>
         </div>
-
-        <p class="nota" id="shExemplo" style="margin-top:4px"></p>
-        <div class="aviso" id="shFalta" hidden style="margin-top:12px">
-          <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
-          <span><b>Falta preencher para o robô conseguir rodar:</b>
-            <span id="shFaltaLista"></span></span></div>
-
-        <div class="segredo" data-segredo="shopeeSenha">
-          <span class="rot">2 · A senha</span>
+      </details>
+      <p class="nota" id="shExemplo" style="margin-top:4px"></p>
+      <div class="aviso" id="shFalta" hidden style="margin:12px 0">
+        <svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        <span><b>Falta preencher para o robô conseguir rodar:</b>
+          <span id="shFaltaLista"></span></span></div>
+      <div class="segredo" data-segredo="shopeeSenha">
+          <span class="rot">Senha das contas</span>
           <div class="guardado" hidden>
             <span class="est ok"><span class="pt"></span>Guardada neste computador — não precisa digitar de novo</span>
           </div>
@@ -1472,9 +1494,8 @@ details.cred summary:hover{color:var(--tinta)}
           <em>Fica num arquivo que só o seu usuário deste computador consegue abrir.
             Ela nunca sai daqui. Fica guardada mesmo quando o Esteira atualiza.</em>
         </div>
-
-        <div class="segredo" data-segredo="codigoChave">
-          <span class="rot">3 · O código que a Shopee manda por e-mail</span>
+      <div class="segredo" data-segredo="codigoChave">
+          <span class="rot">Chave da RapidAPI <span class="ter" style="font-weight:400">· lê o código que a Shopee manda por e-mail</span></span>
           <div class="guardado" hidden>
             <span class="est ok"><span class="pt"></span>Guardada neste computador — não precisa digitar de novo</span>
           </div>
@@ -1489,31 +1510,38 @@ details.cred summary:hover{color:var(--tinta)}
             abrir essa caixa de entrada para ler o código — e quem faz isso é um serviço
             chamado RapidAPI. Esta é a chave dele.</em>
         </div>
+    </div>
+  </aside>
 
-
-
-        <div class="linha-chave" style="margin-top:16px">
-          <div><b>Entrar sozinho quando a sessão cair</b>
-            <p class="nota" style="margin:3px 0 0">Desligado, a conta vai para a etapa 3
-              esperando você entrar à mão.</p></div>
-          <button class="chave" id="chLogin" role="switch" aria-pressed="true"></button>
-        </div>
-      </div>
-
-      <div class="bloco">
-        <div class="rotulo"><h2><svg class="lg shopify" viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></svg>Shopify</h2></div>
-        <div id="shopCorpo"></div>
-      </div>
-
-      <div class="bloco">
-        <div class="rotulo"><h2>Permissões concedidas</h2><span class="dir">8 de 8</span></div>
-        <div class="escopos" id="escopos"></div>
+  <aside class="aj-gaveta" id="gShopify" role="dialog" aria-modal="true" aria-labelledby="gShopifyT" hidden>
+    <div class="aj-gcab"><svg class="lg shopify" viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></svg><h2 id="gShopifyT">Shopify</h2>
+      <button class="btn olho" data-fechar aria-label="Fechar" title="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="aj-gcorpo">
+      <div id="shopCorpo"></div>
+      <details class="aj-mais"><summary>Permissões concedidas</summary>
+        <div class="escopos" id="escopos" style="margin-top:10px"></div>
         <p class="nota">Mudar permissão no app não basta: a loja precisa aprovar de novo.</p>
-      </div>
+      </details>
+    </div>
+  </aside>
 
-      <div class="bloco">
-        <div class="rotulo"><h2>Esta máquina</h2></div>
-        <dl style="margin:0">
+  <aside class="aj-gaveta" id="gAvancado" role="dialog" aria-modal="true" aria-labelledby="gAvancadoT" hidden>
+    <div class="aj-gcab"><h2 id="gAvancadoT">Avançado</h2>
+      <button class="btn olho" data-fechar aria-label="Fechar" title="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="aj-gcorpo">
+      <div class="op"><div><div class="t">Corrigir o link dos pedidos já escritos</div>
+        <div class="d">Troca o link antigo (o dos Correios) pelo link de rastreio atual, nos pedidos que o
+          robô já escreveu. Os códigos ficam os mesmos e o cliente não recebe aviso.</div></div>
+        <button class="btn" id="bConferirLinks">Conferir</button></div>
+      <div class="aviso" id="linksRes" hidden style="margin-top:10px">
+          <svg viewBox="0 0 24 24"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
+          <span id="linksTxt"></span>
+          <span id="linksBotoes" hidden style="margin-left:8px">
+            <button class="btn peq pri" id="bCorrigirLinks">Trocar</button>
+            <button class="btn peq" id="bCancelarLinks">Cancelar</button></span></div>
+      <div class="aj-sep"></div>
+      <h3 class="aj-h3">Esta máquina</h3>
+      <dl style="margin:0">
           <div class="par"><dt>Memória</dt><dd class="num" id="maqRam">16 GB</dd></div>
           <div class="par"><dt>Núcleos</dt><dd class="num" id="maqNucleos">16</dd></div>
           <div class="par"><dt>Recomendado</dt><dd><b id="recAj">8</b> navegadores ao mesmo tempo
@@ -1522,9 +1550,8 @@ details.cred summary:hover{color:var(--tinta)}
         </dl>
         <p class="nota">Lido do computador ao abrir. Cada navegador pesa cerca de meio giga,
           e ficam 4 GB reservados para o sistema e o próprio AdsPower.</p>
-      </div>
     </div>
-  </div>
+  </aside>
 </section>
 
 </main>
@@ -2749,8 +2776,11 @@ var DIAGS=[
    passos:["A API local aceita cerca de uma chamada por segundo.",
            "Espere alguns segundos e teste de novo."]}];
 var qualDiag=0;
+// estado dos cartões de Ajustes (ver pintaCartoes): declarado antes do primeiro pintaDiag
+var AJ={diag:null,a:null,shopVerificando:false};
 function pintaDiag(d,carregando){
   var cx=$("adsResultado");
+  if(!carregando){ AJ.diag=d; pintaCartoes(); }
   if(carregando){
     cx.innerHTML='<div class="diag espera"><svg viewBox="0 0 24 24" class="girar">'+ICO_GIRA+
       '</svg><div><b>Testando…</b>Falando com o AdsPower nesta máquina.</div></div>';
@@ -2871,6 +2901,7 @@ var ESCOPOS_TXT="read_orders,write_orders,read_fulfillments,write_fulfillments,"
   "read_assigned_fulfillment_orders,write_assigned_fulfillment_orders,"+
   "read_merchant_managed_fulfillment_orders,write_merchant_managed_fulfillment_orders";
 function pintaShopify(){
+  AJ.shopVerificando=false; pintaCartoes();
   pintaE4();
   var c=$("shopCorpo");
   if(shopEstado==="desconectada"){
@@ -2951,6 +2982,76 @@ function pintaShopify(){
     }).catch(function(e){ avisar("Não consegui desconectar", e&&e.message?e.message:""); });
   };
 }
+
+/* ── Ajustes: cartões de conexão e gavetas (0.1.19) ──
+   O status de cada cartão sai do que JÁ foi provado: o último teste do
+   AdsPower, o que falta nos ajustes guardados e o estado da loja. Antes de
+   qualquer prova, o cartão diz "Conferindo…", não "Conectado". */
+function pintaCartao(id,classe,est,det,acao){
+  var c=$(id); if(!c) return;
+  c.className="aj-cartao"+(classe==="at"||classe==="er"?" "+classe:"");
+  var e=$(id+"Est"); e.className="est "+(classe==="ok"?"ok":classe==="at"?"at":classe==="er"?"er":"andando");
+  e.innerHTML='<span class="pt"></span>'+esc(est);
+  $(id+"Det").textContent=det||"";
+  var b=c.querySelector("[data-gaveta]");
+  b.textContent=acao; b.classList.toggle("pri",classe==="at"||classe==="er");
+}
+function emailDe(a,n){
+  var alto=a.emailPrefixoAlto, faixa=Number(a.emailFaixa)||0;
+  return ((alto&&faixa&&n>=faixa)?alto:a.emailPrefixo)+n+"@"+a.emailDominio;
+}
+function pintaCartoes(){
+  var d=AJ.diag, a=AJ.a;
+  if(!d) pintaCartao("cAds","","Conferindo…","Testando a conexão com o AdsPower.","Configurar");
+  else if(!d.ok) pintaCartao("cAds","er","Não conectado",d.titulo||"","Resolver");
+  else if(d.naoReconhecidos&&d.naoReconhecidos.length)
+    pintaCartao("cAds","at","Falta o nome dos perfis","Os perfis se chamam "+
+      d.naoReconhecidos.slice(0,2).join(", ")+"… e nenhum foi reconhecido.","Resolver");
+  else pintaCartao("cAds","ok","Conectado",d.provado&&d.provado.length?"Conferido: "+d.provado.join(" · ")+".":"","Configurar");
+
+  if(!a) pintaCartao("cShopee","","Conferindo…","","Configurar");
+  else if((a.falta||[]).length) pintaCartao("cShopee","at","Falta preencher",
+    a.falta.join(", ").replace(/^./,function(x){return x.toUpperCase();})+".","Resolver");
+  else pintaCartao("cShopee","ok","Tudo preenchido","A conta 124 entra como "+emailDe(a,124)+
+    (a.loginAutomatico===false?" · entrar sozinho está desligado":"")+".","Configurar");
+
+  if(AJ.shopVerificando) pintaCartao("cShopify","","Conferindo…","Verificando a conexão com a loja.","Configurar");
+  else if(shopEstado==="conectada") pintaCartao("cShopify",shopDados.faltando&&shopDados.faltando.length?"at":"ok",
+    shopDados.faltando&&shopDados.faltando.length?"Faltam permissões":(shopDados.loja+" conectada"),
+    (shopDados.dominio||"")+" · "+(shopDados.faltando&&shopDados.faltando.length
+      ? "faltam "+shopDados.faltando.length : shopDados.escopos+" de 8")+" permissões",
+    shopDados.faltando&&shopDados.faltando.length?"Resolver":"Gerenciar");
+  else if(shopEstado==="conectando") pintaCartao("cShopify","","Esperando você aprovar",
+    "A tela de permissões da Shopify abriu no navegador.","Configurar");
+  else pintaCartao("cShopify","at","Não conectada","Conecte para o robô escrever os rastreios.","Resolver");
+}
+var gaveta=null, gavetaVolta=null;
+function abrirGaveta(id,origem){
+  var g=$(id); if(!g) return;
+  // o foco volta para quem abriu; trocar de uma gaveta para outra mantém a primeira origem
+  if(gaveta&&gaveta!==g) gaveta.hidden=true; else gavetaVolta=origem||document.activeElement;
+  $("ajVeu").hidden=false; g.hidden=false; gaveta=g;
+  // o campo que falta recebe o foco; senão, o botão de fechar
+  var alvo = id==="gAds"&&AJ.diag&&AJ.diag.naoReconhecidos&&AJ.diag.naoReconhecidos.length ? $("shNomePerfil")
+    : g.querySelector("[data-fechar]");
+  if(alvo) alvo.focus();
+}
+function fecharGaveta(){
+  if(!gaveta) return;
+  gaveta.hidden=true; $("ajVeu").hidden=true; gaveta=null;
+  if(gavetaVolta&&gavetaVolta.focus) gavetaVolta.focus();
+  gavetaVolta=null;
+}
+document.addEventListener("click",function(e){
+  var abre=e.target.closest("[data-gaveta]");
+  if(abre){ abrirGaveta(abre.dataset.gaveta,abre); return; }
+  if(e.target.closest("[data-fechar]")||e.target.id==="ajVeu") fecharGaveta();
+});
+document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&gaveta) fecharGaveta(); });
+// sair de Ajustes fecha a gaveta que ficou aberta
+document.addEventListener("click",function(e){
+  var t=e.target.closest("[data-tela]"); if(t&&t.dataset.tela!=="ajustes") fecharGaveta();
+},true);
 
 $("escopos").innerHTML=["read_orders","write_orders","read_fulfillments","write_fulfillments",
   "read_assigned_fulfil…","write_assigned_fulfil…","read_merchant_man…","write_merchant_man…"]
@@ -3092,6 +3193,7 @@ window.TELA = {
     // as duas seriam mentira. "Verificando" é o que está acontecendo.
     ["e4Loja","e4Dominio","e4Escopos","e4Acesso"].forEach(function(id){ $(id).textContent="verificando…"; });
     $("shopCorpo").innerHTML='<p class="nota" style="margin:0">Verificando a conexão com a loja…</p>';
+    AJ.diag=null; AJ.shopVerificando=true; pintaCartoes();
     pintaAtrasados(); pintaColeta(); pintaRevisao(); pintaEscrita();
     pintaContasInv(); pintaDias(); pintaTrilha();
   },
@@ -3158,6 +3260,12 @@ window.TELA = {
     });
     if(a.nomePerfil!=null && document.activeElement!==$("shNomePerfil")) $("shNomePerfil").value=a.nomePerfil;
     pintaNomePerfil(a.nomePerfil);
+    if(a.emailPrefixoAlto) $("shDois").open=true;
+    // o nome dos perfis mudou depois de um teste que não reconheceu nenhum: testa de novo
+    var nomeAntes=AJ.a?AJ.a.nomePerfil:undefined;
+    AJ.a=a; pintaCartoes();
+    if(a.nomePerfil&&nomeAntes!==undefined&&a.nomePerfil!==nomeAntes&&AJ.diag&&AJ.diag.naoReconhecidos
+       &&AJ.diag.naoReconhecidos.length&&GANCHOS.testarAds) GANCHOS.testarAds();
     if(a.emailPrefixo!=null) $("shPrefixo").value=a.emailPrefixo;
     if(a.emailPrefixoAlto!=null) $("shPrefixoAlto").value=a.emailPrefixoAlto;
     if(a.emailDominio!=null) $("shDominio").value=a.emailDominio;

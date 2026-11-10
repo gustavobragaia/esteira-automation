@@ -1026,3 +1026,30 @@ verde e a coleta recusou com "AdsPower: Require api-key (code -1)".
   ambiente como no app.
 - Teste: `aplicativo/ensaio-chave-ao-vivo.mjs` (app abre sem chave, a chave
   chega pela tela, a coleta acha o perfil). Sem a correção reproduz o erro.
+
+## 10/11/2026 — v0.1.19: Ajustes em cartões de conexão e gavetas
+
+Os clientes novos se perdiam em Ajustes: duas colunas desequilibradas, o que
+trava a rodada (AdsPower, Shopee, Shopify) abaixo da dobra e o que quase
+ninguém mexe (som, tema) em cima. Três propostas foram desenhadas; a escolhida
+foi a "C".
+
+- Topo: três cartões (AdsPower, Login da Shopee, Shopify), cada um com o estado
+  PROVADO: o último teste do AdsPower (incluindo "nenhum perfil reconhecido"),
+  o que falta nos ajustes guardados e o estado da loja. Antes da prova, diz
+  "Conferindo…", nunca um "Conectado" de exemplo. Com pendência, borda do
+  estado e botão "Resolver".
+- Cada cartão abre uma gaveta lateral com a configuração. Os campos são os
+  mesmos de antes, com os mesmos ids: o resto do app e os testes não mudam.
+  Esc, o fundo e o X fecham; o foco volta a quem abriu; sair de Ajustes fecha.
+- "Como os perfis se chamam" foi para a gaveta do AdsPower (é nome de perfil
+  do AdsPower). Salvar um nome novo depois de um teste sem perfil reconhecido
+  testa de novo sozinho.
+- "3 · O código que a Shopee manda por e-mail" virou "Chave da RapidAPI · lê o
+  código…": o cliente não sabia que ali ia uma chave.
+- Para "Avançado": endereço da API local, permissões da Shopify, corrigir
+  links antigos, esta máquina. Saiu da tela o "Avisar o cliente final · ainda
+  não" (controle que não fazia nada).
+- Recusa ao salvar um campo agora aparece embaixo do próprio campo ("Não
+  guardei: …"). Antes ia só para a notificação do sistema.
+- Teste: `aplicativo/ensaio-ajustes-cartoes.mjs`.
