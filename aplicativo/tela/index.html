@@ -1377,6 +1377,9 @@ details.cred summary:hover{color:var(--tinta)}
       <div class="op"><div><div class="t">Entrar sozinho quando a sessão cair</div>
         <div class="d">Desligado, a conta vai para a etapa 3 esperando você.</div></div>
         <button class="chave" id="chLogin" role="switch" aria-pressed="true" aria-label="Entrar sozinho quando a sessão cair"></button></div>
+      <div class="op"><div><div class="t">Avisar o comprador por e-mail</div>
+        <div class="d">Quando o rastreio é escrito, a Shopify manda ao comprador o e-mail de "pedido enviado" com o link.</div></div>
+        <button class="chave" id="chCliente" role="switch" aria-pressed="true" aria-label="Avisar o comprador por e-mail"></button></div>
       <div id="blLink" class="aj-link">
         <label class="campo" style="display:block"><span>Link de rastreio no pedido</span>
           <input id="ajLink" spellcheck="false" placeholder="https://parcelsapp.com/pt/tracking">
@@ -1398,7 +1401,6 @@ details.cred summary:hover{color:var(--tinta)}
             <button id="tSis" aria-pressed="true">Sistema</button>
             <button id="tLuz" aria-pressed="false">Claro</button>
             <button id="tEsc" aria-pressed="false">Escuro</button></div></div>
-      <button class="chave" id="chCliente" aria-pressed="false" disabled hidden></button>
     </div>
   </div>
 
@@ -1690,6 +1692,8 @@ function chave(id,set){
 chave("chSom",function(v){som=v; GANCHOS.guardarPreferencia({som:v});});
 chave("chNot",function(v){notif=v; GANCHOS.guardarPreferencia({notificacao:v});});
 chave("chDireto",function(v){direto=v; pintaEscrita(); GANCHOS.guardarPreferencia({escreverDireto:v});});
+// a escolha da pessoa passa a valer sobre o padrão (ver notificarClienteEscolhido em src/ajustes.mjs)
+chave("chCliente",function(v){ GANCHOS.guardarPreferencia({notificarCliente:v, notificarClienteEscolhido:true}); });
 $("bTestar").onclick=function(){ avisar("Conta 207 precisa de você","A Shopee pediu verificação humana."); };
 
 /* ── Etapa 1: planilhas ── */
@@ -3252,6 +3256,7 @@ window.TELA = {
     liga("chSom", a.som, function(v){ som=v; });
     liga("chNot", a.notificacao, function(v){ notif=v; });
     liga("chDireto", a.escreverDireto, function(v){ direto=v; pintaEscrita(); });
+    liga("chCliente", a.notificarCliente, function(){});
     document.querySelectorAll(".segredo").forEach(function(cx){
       var g = a[cx.dataset.segredo] === "guardada";
       // não repinta o que já está certo nem o que a pessoa está digitando

@@ -207,6 +207,28 @@ const idsQueNaoExistem = pares.filter(([id]) => !tela.includes(`id="${id}"`));
 tudo &= ok(!idsQueNaoExistem.length,
   "e todos os campos existem de fato na tela" + (idsQueNaoExistem.length ? ` — sumiram: ${idsQueNaoExistem.map((p) => p[0])}` : ""));
 
+sec("avisar o comprador por e-mail (0.1.20)");
+// O caso real: o arquivo de quem já usava tem "notificarCliente": false
+// gravado só porque era o padrão antigo. Não pode continuar desligado.
+writeFileSync(process.env.AJUSTES_ARQUIVO, JSON.stringify({ shopeeSenha: "x", notificarCliente: false }));
+tudo &= ok(lerAjustes().notificarCliente === true, "arquivo antigo com false gravado → passa a vir LIGADO");
+aplicarNoAmbiente();
+tudo &= ok(process.env.NOTIFICAR_CLIENTE === "1", "e o robô recebe NOTIFICAR_CLIENTE=1");
+salvarAjustes({ notificarCliente: false, notificarClienteEscolhido: true });
+tudo &= ok(lerAjustes().notificarCliente === false, "quem desliga na tela fica desligado");
+aplicarNoAmbiente();
+tudo &= ok(process.env.NOTIFICAR_CLIENTE === "0", "e o desligado chega ao robô na mesma abertura");
+salvarAjustes({ linkRastreio: "" });
+tudo &= ok(lerAjustes().notificarCliente === false, "salvar outro ajuste depois não religa");
+salvarAjustes({ notificarCliente: true, notificarClienteEscolhido: true });
+aplicarNoAmbiente();
+tudo &= ok(lerAjustes().notificarCliente === true && process.env.NOTIFICAR_CLIENTE === "1", "e ligar de novo funciona");
+rmSync(process.env.AJUSTES_ARQUIVO, { force: true });
+tudo &= ok(lerAjustes().notificarCliente === true, "instalação nova já nasce ligada");
+const { montarEntrada } = await import("../src/shopify.mjs");
+tudo &= ok(montarEntrada({ fulfillmentOrderId: "gid://1", codigos: ["BR1"], transportadora: "X",
+  notificar: process.env.NOTIFICAR_CLIENTE !== "0" }).notifyCustomer === true, "a escrita manda notifyCustomer: true");
+
 rmSync(pasta, { recursive: true, force: true });
 console.log(tudo ? "\n\x1b[32m\x1b[1m  ajustes de pé\x1b[0m\n"
                  : "\n\x1b[31m\x1b[1m  ajustes com furo\x1b[0m\n");

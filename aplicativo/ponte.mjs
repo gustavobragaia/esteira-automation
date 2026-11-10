@@ -434,7 +434,8 @@ export function construir({ aoLog = () => {}, aoEvento: enviar, porta = 3000, ab
         case "colar": {
           // O olho humano já aconteceu: `manual:conferir` mostrou o lado da
           // Shopify e a pessoa clicou em escrever.
-          const r = await resolverManual(pedido, texto, { confirmado: true, aceitarRepetido: Boolean(aceitarRepetido) });
+          const r = await resolverManual(pedido, texto, { confirmado: true, aceitarRepetido: Boolean(aceitarRepetido),
+            notificar: process.env.NOTIFICAR_CLIENTE !== "0" });
           // Não é erro: nada foi escrito, e a tela pergunta se é isso mesmo.
           if (!r.ok && r.repetidos) return { precisaConfirmar: true, repetidos: r.repetidos };
           if (!r.ok) throw new Error(r.erro ?? "não deu para escrever");
@@ -668,7 +669,8 @@ export function construir({ aoLog = () => {}, aoEvento: enviar, porta = 3000, ab
       };
     }),
 
-    "escrita:executar": ({ notificar = false } = {}) => tentar(async () => {
+    // Sem dizer, vale o Ajuste "Avisar o comprador por e-mail" (já no ambiente).
+    "escrita:executar": ({ notificar = process.env.NOTIFICAR_CLIENTE !== "0" } = {}) => tentar(async () => {
       if (escritaEmCurso) throw new Error("a escrita já está acontecendo");
       escritaEmCurso = true;
       try {
@@ -692,7 +694,8 @@ export function construir({ aoLog = () => {}, aoEvento: enviar, porta = 3000, ab
     // ── escrita manual ────────────────────────────────────────────────
     "manual:conferir": ({ pedido, texto }) => tentar(() => prepararManual(pedido, texto)),
     "manual:escrever": ({ pedido, texto, notificar, aceitarRepetido }) =>
-      tentar(() => resolverManual(pedido, texto, { confirmado: true, notificar, aceitarRepetido: Boolean(aceitarRepetido) })),
+      tentar(() => resolverManual(pedido, texto, { confirmado: true,
+        notificar: notificar ?? process.env.NOTIFICAR_CLIENTE !== "0", aceitarRepetido: Boolean(aceitarRepetido) })),
 
     // ── histórico ─────────────────────────────────────────────────────
     "historico:listar": async ({ limite = 60 } = {}) => historico(limite),

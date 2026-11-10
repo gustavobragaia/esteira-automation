@@ -90,6 +90,21 @@ app.whenReady().then(async () => {
   tudo &= ok(await aberta() === "gAvancado", "abrir outra gaveta troca a aberta (uma por vez)");
   tudo &= ok(await js(`!!document.querySelector("#gAvancado #bConferirLinks") && !!document.querySelector("#gAvancado #maqRam")`),
     "Avançado tem corrigir links e esta máquina");
+  await js(`document.querySelector("#gAvancado [data-fechar]").click()`); await espera(200);
+  // 0.1.20: "Avisar o comprador por e-mail" nasce ligado e a escolha persiste
+  tudo &= ok(await js(`document.getElementById("chCliente").getAttribute("aria-pressed")`) === "true",
+    "\"Avisar o comprador por e-mail\" aparece ligado");
+  await js(`document.getElementById("chCliente").click()`); await espera(700);
+  let aj = (await js(`window.esteira.pedir("ajustes:ler")`)).dado;
+  tudo &= ok(aj.notificarCliente === false && aj.notificarClienteEscolhido === true, "desligar na tela guarda a escolha");
+  w.webContents.reload(); await espera(3500);
+  await js(`document.querySelector('[data-tela="ajustes"]').click()`); await espera(300);
+  tudo &= ok(await js(`document.getElementById("chCliente").getAttribute("aria-pressed")`) === "false",
+    "depois de reabrir, continua desligado");
+  await js(`document.getElementById("chCliente").click()`); await espera(700);
+  aj = (await js(`window.esteira.pedir("ajustes:ler")`)).dado;
+  tudo &= ok(aj.notificarCliente === true, "e ligar de novo guarda ligado");
+  await js(`document.getElementById("bGavAds").click()`); await espera(200);
   await js(`document.querySelector('[data-tela="historico"]').click()`); await espera(200);
   tudo &= ok(await aberta() === "", "sair de Ajustes fecha a gaveta");
 

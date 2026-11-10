@@ -25,13 +25,13 @@ const X = "BR2600000000011", Y = "BR260000000002Y", W = "BR260000000004W";
 writeFileSync(process.env.REGISTRO_ESCRITAS, JSON.stringify({
   "170420": { fulfillmentId: "gid://F/a", pedido: "#170420", codigos: [X], em: new Date().toISOString(), origem: "manual" } }));
 
-let mutacoes = 0;
+let mutacoes = 0, avisou = [];
 globalThis.fetch = ((orig) => async (url, opcoes = {}) => {
   if (!String(url).includes("myshopify")) return orig(url, opcoes);
   const corpo = JSON.parse(opcoes.body ?? "{}");
   const resp = (data) => new Response(JSON.stringify({ data }), { status: 200, headers: { "content-type": "application/json" } });
   if (/fulfillmentCreateV2/.test(corpo.query)) {
-    mutacoes++;
+    mutacoes++; avisou.push(corpo.variables.f.notifyCustomer);
     const t = corpo.variables.f.trackingInfo, nums = t.numbers ?? [t.number];
     return resp({ fulfillmentCreateV2: { userErrors: [], fulfillment: { id: "gid://F/" + mutacoes, status: "SUCCESS",
       trackingInfo: nums.map((n) => ({ number: n, url: "", company: "Shopee Xpress" })) } } });
@@ -103,6 +103,8 @@ app.whenReady().then(async () => {
   await js(`${item("Pedido #170422")}.querySelector("[data-repetido-sim]").click(); 1`);
   await espera(1500);
   tudo &= ok(mutacoes === 1, "\"Escrever mesmo assim\" escreve, uma vez");
+  // 0.1.20: a conferência também pede à Shopify o e-mail ao comprador
+  tudo &= ok(avisou[0] === true, `e pede o e-mail ao comprador (notifyCustomer: ${avisou[0]})`);
   tudo &= ok(await js(`!${item("Pedido #170422")}`), "e o pedido sai da conferência");
   const trat = await js(`document.getElementById("listaTratados").innerText`);
   tudo &= ok(/mesmo rastreio de #170420/.test(trat), "\"Já tratados\" diz que foi com o mesmo rastreio de outro pedido");

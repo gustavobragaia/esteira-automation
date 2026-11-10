@@ -1053,3 +1053,28 @@ foi a "C".
 - Recusa ao salvar um campo agora aparece embaixo do próprio campo ("Não
   guardei: …"). Antes ia só para a notificação do sistema.
 - Teste: `aplicativo/ensaio-ajustes-cartoes.mjs`.
+
+## 10/11/2026 — v0.1.20: o comprador recebe o e-mail com o rastreio
+
+A Esparta notou que os compradores cobravam o rastreio já gerado e que a
+Shopify não mostrava envio de e-mail. Era o Esteira: toda escrita ia com
+`notifyCustomer: false` (o ajuste `notificarCliente` nascia desligado e não
+tinha tela; a conferência nem lia o ajuste).
+
+- Ajustes → Rodada ganhou "Avisar o comprador por e-mail", **ligado por
+  padrão**. Vale para a escrita em lote, o "Usar este" e o "Colei o
+  rastreio".
+- Quem já tinha ajustes salvos tinha `notificarCliente: false` gravado só
+  porque era o padrão antigo. `notificarClienteEscolhido` separa isso: até a
+  pessoa mexer na chave, vale o padrão novo (ligado).
+- `aplicarNoAmbiente` passa a escrever os dois sentidos (`"0"`/`"1"`): antes
+  só escrevia o "ligado", então desligar não chegava ao robô sem reiniciar.
+- "Corrigir o link dos pedidos já escritos" continua SEM avisar o comprador.
+- Pedidos já escritos sem e-mail ficaram como estão. Reenviar o aviso é
+  possível (`fulfillmentTrackingInfoUpdate` com `notifyCustomer: true`), mas
+  só a pedido do dono da loja.
+- Prova na loja de teste, pedido #1024 com e-mail do Gustavo: o histórico da
+  Shopify registrou "Esteira sent a shipping confirmation email to …".
+- Testes: `scripts/testar-ajustes.mjs` (migração e ambiente),
+  `ensaio-ajustes-cartoes.mjs` (chave na tela, persistência),
+  `ensaio-repetido.mjs` (a conferência manda `notifyCustomer: true`).

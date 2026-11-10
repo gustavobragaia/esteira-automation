@@ -1,0 +1,7 @@
+Já está no ar a *versão 0.1.20* do Esteira. É só abrir o app que ele atualiza sozinho.
+
+*O que mudou:* a partir desta versão, quando o Esteira escreve o rastreio na Shopify, o comprador *recebe o e-mail de "pedido enviado"* com o link de rastreio. Até agora o robô escrevia o rastreio sem disparar esse e-mail, por isso os clientes não eram avisados.
+
+Já vem ligado, não precisa fazer nada. Se um dia quiser desligar, fica em *Ajustes > Rodada > "Avisar o comprador por e-mail"*.
+
+*Importante:* os pedidos que já foram escritos antes desta versão não receberam o e-mail. Se quiser, consigo mandar o aviso para eles também. Me avise e eu te digo antes quantos pedidos seriam.

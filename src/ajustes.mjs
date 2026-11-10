@@ -49,7 +49,14 @@ const PADRAO = {
   som: true,
   notificacao: true,
   escreverDireto: false,
-  notificarCliente: false,    // a Shopify manda "pedido enviado" ao comprador
+  // A Shopify manda ao comprador o e-mail de "pedido enviado", com o link de
+  // rastreio. Nasceu desligado e sem tela; em 10/11/2026 a Esparta notou que
+  // os compradores cobravam o rastreio que nunca receberam. Agora vem LIGADO.
+  notificarCliente: true,
+  // Quem já tinha ajustes salvos tem "notificarCliente": false gravado só
+  // porque era o padrão antigo (o salvar grava o arquivo inteiro). Enquanto a
+  // pessoa não mexer na chave, vale o padrão novo; mexeu, vale a escolha dela.
+  notificarClienteEscolhido: false,
   tema: "sistema",
 
   // O guia da primeira vez (tela/guia.js) abre enquanto isto for false.
@@ -69,7 +76,9 @@ export function lerAjustes() {
     const cru = JSON.parse(readFileSync(arquivo(), "utf8"));
     const fora = {};
     for (const c of CAMPOS) if (cru[c] !== undefined) fora[c] = cru[c];
-    return { ...PADRAO, ...fora };
+    const a = { ...PADRAO, ...fora };
+    if (!a.notificarClienteEscolhido) a.notificarCliente = PADRAO.notificarCliente;
+    return a;
   } catch {
     return { ...PADRAO };
   }
@@ -166,6 +175,8 @@ export function aplicarNoAmbiente(a = lerAjustes()) {
   // desligamento. `?? true` no PADRAO garante que só um "false" explícito
   // chega aqui.
   if (a.loginAutomatico === false) process.env.LOGIN_AUTOMATICO = "0";
-  if (a.notificarCliente === true) process.env.NOTIFICAR_CLIENTE = "1";
+  // Os dois sentidos: desligar na tela tem que chegar ao robô na mesma
+  // abertura (antes só o "ligado" era escrito, e o "1" ficava para sempre).
+  process.env.NOTIFICAR_CLIENTE = a.notificarCliente === false ? "0" : "1";
   return a;
 }
