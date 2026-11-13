@@ -193,5 +193,29 @@ sec("5. Pela ponte do app: conferir antes de trocar");
   tudo &= ok(ex.link === P("BR2620456593785"), `exemplo do campo: ${ex.link}`);
 }
 
+{
+  // 13/11/2026: o código longo da Shopee (BR… e SPX… colados) é UM código.
+  // A Shopee devolve assim em tracking_number; o Esteira cortava em dois.
+  console.log("\n\x1b[1mcódigo longo da Shopee (BR…SPX… colado)\x1b[0m");
+  const { readFileSync } = await import("node:fs");
+  const LONGO = "BR269719913465XSPXLM17748462";
+  const t = parseTracking(LONGO);
+  tudo &= ok(t.codes.length === 1 && t.codes[0].code === LONGO && t.status === "ok", `robô: ${LONGO} é um código só`);
+  tudo &= ok(parseTracking("BR269719913465X - SPXLM17748462").codes.length === 2, "com separador continuam dois");
+  tudo &= ok(transportadoraDe(t.codes) === "Shopee Xpress", "transportadora: Shopee Xpress");
+  tudo &= ok(urlRastreio(LONGO).endsWith("/" + LONGO), "o link leva o código inteiro");
+  // a extensão que coleta na Shopee: o mesmo padrão, lido do arquivo que vai para os perfis
+  const ext = readFileSync(new URL("../extensao/coleta.js", import.meta.url), "utf8");
+  const reExt = new RegExp(ext.match(/const RE_RASTREIO = \/(.+)\/g;/)[1], "g");
+  tudo &= ok(JSON.stringify("BR269036521348MSPXLM14989277".match(reExt)) === JSON.stringify(["BR269036521348MSPXLM14989277"]),
+    "extensão: o tracking_number da Shopee sai inteiro");
+  // a tela da conferência (o "Colei o rastreio")
+  const tela = readFileSync(new URL("../aplicativo/tela/index.html", import.meta.url), "utf8");
+  const fonte = tela.slice(tela.indexOf("var PADROES="), tela.indexOf("function montarSaidas"));
+  const achar = new Function(fonte + "; return acharCodigos;")();
+  tudo &= ok(JSON.stringify(achar("segue " + LONGO.toLowerCase())) === JSON.stringify([LONGO]), "tela: colar o código longo dá um só");
+  tudo &= ok(achar("BR269719913465X, SPXLM17748462").length === 2, "tela: separados continuam dois");
+}
+
 console.log(tudo ? "\n\x1b[32m\x1b[1m  link de rastreio: ok\x1b[0m\n" : "\n\x1b[31m\x1b[1m  link de rastreio: FALHOU\x1b[0m\n");
 process.exit(tudo ? 0 : 1);

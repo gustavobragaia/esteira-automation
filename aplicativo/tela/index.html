@@ -2088,11 +2088,14 @@ var SAIDAS=[["colar","Colei o rastreio"],["conta","Era outra conta"],
             ["encerrar","Não vai ter rastreio"],["adiar","Deixar para amanhã"]];
 var FIM=[["cancelado","Pedido cancelado"],["reembolsado","Reembolsado"],
          ["nao-comprado","Nunca foi comprado"]];
-var PADROES=[/BR\d{12}[A-Z0-9]/g,/SPX[A-Z]{0,3}\d{6,}/g,/[A-Z]{2}\d{9}BR/g];
+// o código longo (BR…SPX… colado) é um só: vem primeiro e sai do texto
+// antes dos outros padrões, para não ser achado de novo em pedaços
+var PADROES=[/BR\d{12}[A-Z0-9]SPX[A-Z]{0,3}\d{6,}/g,/BR\d{12}[A-Z0-9]/g,/SPX[A-Z]{0,3}\d{6,}/g,/[A-Z]{2}\d{9}BR/g];
 function acharCodigos(t){
   var a=String(t||"").toUpperCase(), o=[];
   PADROES.forEach(function(re){var m;re.lastIndex=0;
-    while((m=re.exec(a))!==null) if(o.indexOf(m[0])<0) o.push(m[0]);});
+    while((m=re.exec(a))!==null) if(o.indexOf(m[0])<0) o.push(m[0]);
+    a=a.replace(re,function(x){ return " ".repeat(x.length); });});
   return o;
 }
 function montarSaidas(){

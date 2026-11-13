@@ -26,7 +26,9 @@
     }
   };
 
-  const RE_RASTREIO = /BR\d{12}[A-Z0-9]|SPX[A-Z]*\d{6,}|[A-Z]{2}\d{9}BR/g;
+  // O longo primeiro: "BR269036521348MSPXLM14989277" é UM código (é assim
+  // que a Shopee devolve em tracking_number); sem isto virava dois.
+  const RE_RASTREIO = /BR\d{12}[A-Z0-9]SPX[A-Z]*\d{6,}|BR\d{12}[A-Z0-9]|SPX[A-Z]*\d{6,}|[A-Z]{2}\d{9}BR/g;
 
   // Procura o rastreio em qualquer profundidade e devolve também o caminho
   // do campo — é isso que me diz onde o código mora de verdade.

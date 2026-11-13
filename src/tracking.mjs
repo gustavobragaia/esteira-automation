@@ -5,6 +5,12 @@
 const CORREIOS = /[A-Z]{2}\d{9}BR/g;            // AN900000001BR
 const SHOPEE_BR = /BR\d{12}[A-Z0-9]/g;          // BR260000000001M  (BR + 12 dígitos + 1 alfanum)
 const SPX = /SPX[A-Z]{0,3}\d{6,}/g;             // SPXLM10000001
+// O código LONGO da Shopee: BR… e SPX… colados, sem separador, é UM código só.
+// A própria Shopee devolve assim no campo tracking_number
+// ("BR269036521348MSPXLM14989277", conta 126). Cortar em dois escrevia dois
+// rastreios errados na Shopify (o Davi notou em 13/11/2026). Com espaço,
+// traço ou vírgula entre eles continuam sendo dois.
+const SHOPEE_LONGO = /BR\d{12}[A-Z0-9]SPX[A-Z]{0,3}\d{6,}/g;
 
 const NAO_RASTREIO = new Set([
   "entregue", "cancelado", "enviado", "ainda sem rastreio",
@@ -37,6 +43,7 @@ export function parseTracking(raw) {
   };
 
   // ordem importa: o padrão mais específico primeiro
+  take(SHOPEE_LONGO, "shopee");
   take(SPX, "shopee-xpress");
   take(CORREIOS, "correios");
   // BR + 12 dígitos é da Shopee Express, não dos Correios: o parcelsapp
