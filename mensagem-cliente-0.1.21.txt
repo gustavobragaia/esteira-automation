@@ -1,0 +1,5 @@
+Já está no ar a *versão 0.1.21* do Esteira. É só abrir o app que ele atualiza sozinho.
+
+*O que foi corrigido:* quando a Shopee gera um rastreio grande (o que junta o BR com o SPX, por exemplo BR269719913465XSPXLM17748462), o Esteira estava cortando em dois e subindo na Shopify como dois códigos separados. Agora ele sobe o código inteiro, do jeito que aparece na Shopee.
+
+Os pedidos que já foram escritos com o código cortado continuam assim na Shopify. Se quiser, consigo corrigir esses também, trocando pelo código inteiro, sem mandar e-mail de novo ao comprador. Me avise e eu te digo antes quantos pedidos seriam.

@@ -1078,3 +1078,17 @@ tinha tela; a conferência nem lia o ajuste).
 - Testes: `scripts/testar-ajustes.mjs` (migração e ambiente),
   `ensaio-ajustes-cartoes.mjs` (chave na tela, persistência),
   `ensaio-repetido.mjs` (a conferência manda `notifyCustomer: true`).
+
+## 13/11/2026 — v0.1.21: o código longo da Shopee é um rastreio só
+
+O Davi viu na Shopify dois rastreios ("BR269719913465X" e "SPXLM17748462")
+onde o certo era um: "BR269719913465XSPXLM17748462". A Shopee devolve assim,
+colado, no campo `tracking_number` (caso igual na coleta da conta 126:
+"BR269036521348MSPXLM14989277").
+
+- O padrão longo (BR + 13 + SPX…) vem primeiro na extensão (`coleta.js`), no
+  leitor do robô (`src/tracking.mjs`) e no "Colei o rastreio" da tela. Com
+  separador (espaço, traço, vírgula) continuam dois.
+- Pedidos já escritos com o código cortado ficaram como estão; corrigir só a
+  pedido do dono da loja.
+- Teste: `scripts/testar-link-rastreio.mjs` lê o padrão dos três arquivos.

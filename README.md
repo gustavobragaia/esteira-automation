@@ -10,9 +10,9 @@
 </p>
 
 <p align="center">
-  <img alt="versão" src="https://img.shields.io/badge/vers%C3%A3o-0.1.20-5b4bc4">
+  <img alt="versão" src="https://img.shields.io/badge/vers%C3%A3o-0.1.21-5b4bc4">
   <img alt="plataformas" src="https://img.shields.io/badge/Windows%20%7C%20macOS-Electron-5b4bc4">
-  <img alt="testes" src="https://img.shields.io/badge/testes-940%20%2B%20220%20ensaios-2e7d32">
+  <img alt="testes" src="https://img.shields.io/badge/testes-947%20%2B%20220%20ensaios-2e7d32">
 </p>
 
 ---
