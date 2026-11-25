@@ -1092,3 +1092,27 @@ colado, no campo `tracking_number` (caso igual na coleta da conta 126:
 - Pedidos já escritos com o código cortado ficaram como estão; corrigir só a
   pedido do dono da loja.
 - Teste: `scripts/testar-link-rastreio.mjs` lê o padrão dos três arquivos.
+
+## 25/11/2026 — v0.1.22: contas acima de 999, contador da coleta e conferência leve
+
+Três relatos do Matheus (Chomps), 16 a 25/11.
+
+- **"Shopee 999 (1000)".** O AdsPower ordena "Shopee 1000" logo depois de
+  "Shopee 100", e a Chomps passou a nomear os perfis novos assim. O leitor
+  pegava o 999 de todos: perfis repetidos, e a 999 e todas as 1000+ ficavam
+  sem leitura. Agora o número entre parênteses no FIM do nome é a conta, só
+  se for um número puro e MAIOR que o de fora ("Shopee 12 (2)" continua sendo
+  a 12). Na planilha segue "Shopee 1000". Vale também para nome próprio de
+  perfil ("S999 (1001)"). Teste: `scripts/testar-perfis.mjs`.
+- **"Só 19 lidos".** O passo Coleta mostrava `prontos`, que a etapa 4
+  reescreve com o que sobrou para escrever. Rodada de 16/11: 232 com rastreio,
+  194 já escritos antes, 19 novos, e a tela dizia "19 lidos". Agora a Coleta
+  mostra "232 com rastreio" (`resumo.casados`) e a Escrita "19 novos · 194 já
+  escritos". Teste: `ensaio-escrita.mjs`.
+- **Conferência travando.** Cada clique chamava `recarregar()`, que relia o
+  Histórico e as Contas. `contas:listar` interpretava cada coleta inteira
+  (~1,7 MB, ~940 contas na Chomps), cerca de 10 s de processo principal
+  parado por clique. Agora: (1) a contagem de cada coleta fica em cache
+  enquanto o arquivo (mtime + tamanho) não muda; 100 contas passam de ~1 s
+  para 2 ms; (2) depois de decidir, só os atrasados são relidos, uma vez para
+  vários cliques seguidos; Contas e Histórico se releem ao abrir a aba.

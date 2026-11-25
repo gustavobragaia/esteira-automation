@@ -23,6 +23,17 @@ app.whenReady().then(async () => {
   await espera(3500);
   const w = BrowserWindow.getAllWindows()[0];
   const js = (c) => w.webContents.executeJavaScript(c);
+
+  // Matheus, 16/11: a trilha dizia "Coleta · 19 lidos" numa rodada de 232
+  // pedidos com rastreio — 19 eram só os novos, 194 já estavam escritos.
+  await js(`window.TELA.escrita({ resumo: { casados: 232 }, pulados: 194,
+    itens: Array.from({ length: 19 }, (_, i) => ({ pedido: "#" + (5001 + i), conta: 99,
+      nome: "Cliente " + i, codigos: ["BR26" + (5001 + i) + "X"], transportadora: "Correios" })) });`);
+  await espera(150);
+  const s2 = await js(`document.getElementById("s2").innerText`);
+  const s4 = await js(`document.getElementById("s4").innerText`);
+  tudo &= ok(s2 === "232 com rastreio", `a coleta mostra o total com rastreio: "${s2}"`);
+  tudo &= ok(s4 === "19 novos · 194 já escritos", `a escrita separa novos de já escritos: "${s4}"`);
   await js(`window.TELA.escrita({ itens: Array.from({ length: 40 }, (_, i) => ({ pedido: "#" + (1001 + i), conta: 124,
     nome: "Cliente " + i, codigos: ["BR26" + (1001 + i) + "X"], transportadora: "Correios" })) });
     document.querySelector('[data-etapa="4"]').click();`);

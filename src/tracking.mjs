@@ -93,12 +93,25 @@ export function parseConta(raw) {
     const nome = (process.env.NOME_PERFIL ?? "").trim();
     if (nome) {
       const esc = nome.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s*");
-      const m2 = new RegExp(`^${esc}\\s*[-_#.:]?\\s*0*(\\d{1,4})$`, "i").exec(texto);
+      const m2 = new RegExp(`^${esc}\\s*[-_#.:]?\\s*0*(\\d{1,4})(?:\\s*\\(\\s*\\d{1,4}\\s*\\))?$`, "i").exec(texto);
       if (m2) numeros.push(Number(m2[1]));
     }
   }
 
   if (numeros.length === 0) return { numeros: [], status: "nao-e-conta", raw: texto };
+
+  // Acima de 999 o AdsPower ordena "Shopee 1000" logo depois de "Shopee 100",
+  // e a Chomps passou a nomear "Shopee 999 (1000)", "Shopee 999 (1001)"…
+  // O número entre parênteses no FIM é o da conta. Sem isto, todos viravam a
+  // 999 — perfis repetidos — e a 999 e todas as 1000+ ficavam sem leitura.
+  // Só um número puro entre parênteses vale ("(2 pedidos)" não é conta), e
+  // só quando é MAIOR que o de fora: "Shopee 12 (2)" numa célula da planilha
+  // continua sendo a conta 12, e não vira a 2 em silêncio.
+  if (numeros.length === 1) {
+    const par = /\(\s*0*(\d{1,4})\s*\)\s*$/.exec(texto);
+    if (par && Number(par[1]) > numeros[0]) numeros[0] = Number(par[1]);
+  }
+
   return {
     numeros: [...new Set(numeros)],
     status: numeros.length > 1 ? "multiplas-contas" : "ok",

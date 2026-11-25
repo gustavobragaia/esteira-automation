@@ -2,6 +2,7 @@
 // uma conta sobrescrevem os da outra, o robô entra como quem não devia e
 // escreve o rastreio no pedido de outro cliente — sem nenhum erro na tela.
 import { agruparPerfis, perfisCompartilhados } from "../src/perfis.mjs";
+import { parseConta } from "../src/tracking.mjs";
 
 const ok = (c, m) => console.log(c ? `  \x1b[32m✓\x1b[0m ${m}` : `  \x1b[31m✗ ${m}\x1b[0m`) || c;
 const sec = (x) => console.log(`\n\x1b[1m${x}\x1b[0m`);
@@ -35,6 +36,23 @@ tudo &= ok(dup.duplicadas.get(225).map((p) => p.userId).join() === "aaa111,bbb22
 sec("perfil sem número de conta no nome");
 const semN = agruparPerfis([perfil("Perfil de teste", "zzz", 1), perfil("Shopee 7", "s7", 2)]);
 tudo &= ok(semN.semNumero === 1 && semN.mapa.size === 1, "é ignorado, não vira conta");
+
+sec("contas acima de 999: \"Shopee 999 (1000)\" é a conta 1000 (Chomps, 11/2026)");
+const mil = agruparPerfis([
+  perfil("Shopee 998", "p998", 1), perfil("Shopee 999", "p999", 2),
+  perfil("Shopee 999 (1000)", "p1000", 3), perfil("Shopee 999 (1001)", "p1001", 4),
+  perfil("Shopee 999 (1002)", "p1002", 5),
+]);
+tudo &= ok(mil.duplicadas.size === 0, "nenhum perfil vira repetido da 999");
+tudo &= ok(mil.mapa.get(999)?.userId === "p999", "a 999 continua sendo a 999");
+tudo &= ok(mil.mapa.get(1000)?.userId === "p1000" && mil.mapa.get(1002)?.userId === "p1002",
+           "o número entre parênteses é a conta");
+tudo &= ok(parseConta("Shopee 1000").numeros[0] === 1000, "na planilha, \"Shopee 1000\" casa com esse perfil");
+tudo &= ok(parseConta("Shopee 12 (2)").numeros[0] === 12, "parêntese MENOR que o número de fora não troca a conta");
+tudo &= ok(parseConta("Shopee 12 (2 pedidos)").numeros[0] === 12, "texto entre parênteses não é conta");
+const antes = process.env.NOME_PERFIL; process.env.NOME_PERFIL = "S";
+tudo &= ok(parseConta("S999 (1001)").numeros[0] === 1001, "vale também para nome próprio de perfil (S999 (1001))");
+if (antes === undefined) delete process.env.NOME_PERFIL; else process.env.NOME_PERFIL = antes;
 
 sec("duas contas apontando para o MESMO perfil");
 const c1 = perfisCompartilhados([

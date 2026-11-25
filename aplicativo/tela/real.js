@@ -582,7 +582,7 @@ function conferencia(){
       conta: ordem.conta, motivo: ordem.motivo, ate: ordem.ate,
       aceitarRepetido: Boolean(ordem.aceitarRepetido),
     });
-    recarregar();
+    recarregarDepoisDeDecidir();
     return r;
   };
   GANCHOS.conferirColado = async function(pedido, texto){
@@ -594,7 +594,7 @@ function conferencia(){
   };
   GANCHOS.desfazer = async function(pedido){
     var r = await pedir("conferencia:desfazer", { pedido: pedido });
-    recarregar();
+    recarregarDepoisDeDecidir();
     return r;
   };
 }
@@ -639,6 +639,22 @@ GANCHOS.proximaRodada = async function(){
 // qualquer caminho aparece sem precisar fechar o app.
 document.querySelector('[data-tela="historico"]')?.addEventListener("click", function(){
   pedir("historico:dias").then(TELA.historico).catch(function(){});
+});
+
+// Depois de um clique na conferência, só o que aquele clique muda: a lista
+// dos que atravessam de um dia para o outro. Histórico e Contas releem o
+// disco inteiro (na Chomps, ~940 coletas) e iam junto a cada clique — era o
+// "app pesado na conferência". Eles se releem ao abrir a aba deles.
+// Vários cliques seguidos viram uma releitura só.
+var releitura = null;
+function recarregarDepoisDeDecidir(){
+  clearTimeout(releitura);
+  releitura = setTimeout(function(){
+    pedir("pendentes:atrasados").then(TELA.atrasados).catch(function(){});
+  }, 400);
+}
+document.querySelector('[data-tela="contas"]')?.addEventListener("click", function(){
+  pedir("contas:listar").then(TELA.contas).catch(function(){});
 });
 
 async function recarregar(){

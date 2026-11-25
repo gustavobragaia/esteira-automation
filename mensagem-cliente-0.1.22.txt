@@ -1,0 +1,7 @@
+Já está no ar a *versão 0.1.22* do Esteira. É só abrir o app que ele atualiza sozinho.
+
+*Contas acima de 999:* o Esteira agora entende o nome do jeito que vocês estão usando no AdsPower. "Shopee 999 (1000)" é lido como a conta 1000, "Shopee 999 (1001)" como a 1001, e assim por diante. Na planilha continua "Shopee 1000", "Shopee 1001" normalmente.
+
+*Conferência travando:* encontrei a causa. A cada clique nos botões da conferência, o app relia o histórico de todas as contas, e com mais de 900 contas isso congelava a tela por alguns segundos. Não era o seu computador. Agora o clique responde na hora.
+
+*"Só 19 lidos":* como você mesmo viu, os pedidos estavam sendo lidos e escritos. O número da tela é que estava errado: mostrava só os pedidos novos. Agora a etapa Coleta mostra o total com rastreio (por exemplo, "232 com rastreio") e a Escrita separa os novos dos que já tinham sido escritos ("19 novos · 194 já escritos").

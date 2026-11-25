@@ -1630,7 +1630,7 @@ document.addEventListener("click",function(e){
   if(b) ir(b.dataset.etapa||b.dataset.tela||b.dataset.ir);
 });
 
-var TOTAL=0, prontos=0, escritos=0, rodando=false, coletou=false, escrito=false;
+var TOTAL=0, prontos=0, lidosRodada=0, comRastreio=null, jaEscritos=0, escritos=0, rodando=false, coletou=false, escrito=false;
 var escrevendo=false;
 
 function pintaTrilha(){
@@ -1647,9 +1647,12 @@ function pintaTrilha(){
   }
   $("s1").textContent = arquivos.length ? TOTAL+" pedidos" : "";
   var pl=function(n,um,varios){ return n+" "+(n===1?um:varios); };
-  $("s2").textContent = rodando ? "rodando" : (coletou ? pl(prontos,"lido","lidos") : "");
+  // "Coleta" diz quantos pedidos DA PLANILHA saíram com rastreio. Antes
+  // mostrava os que sobraram para escrever (19), e o cliente leu como "só 19
+  // pedidos foram lidos" numa rodada de 232 — 194 já estavam escritos.
+  $("s2").textContent = rodando ? "rodando" : (coletou ? (comRastreio!=null ? comRastreio+" com rastreio" : pl(lidosRodada,"lido","lidos")) : "");
   $("s3").textContent = coletou ? (pendencias() ? pendencias()+" para decidir" : "sem pendência") : "";
-  $("s4").textContent = escrito ? pl(escritos,"escrito","escritos") : (coletou ? pl(prontos,"pronto","prontos") : "");
+  $("s4").textContent = escrito ? pl(escritos,"escrito","escritos") : (coletou ? pl(prontos,"novo","novos")+(jaEscritos?" · "+jaEscritos+" já escritos":"") : "");
   // Sem nada ainda, cada etapa diz o que ela é — a barra lateral não fica muda.
   ["a planilha do dia","abrir as contas","o que teve dúvida","escrever os rastreios"]
     .forEach(function(t,i){ var el=$("s"+(i+1)); if(!el.textContent) el.textContent=t; });
@@ -1909,9 +1912,12 @@ function pintaColeta(){
   pintaProgresso();
   var f=CONTAS_RODADA.filter(function(c){return estadoConta[c.n]==="feita";});
   var sem=f.filter(function(c){return c.viva;}).length;
-  prontos=f.reduce(function(s,c){return s+c.pedidos;},0);
+  // O que a coleta LEU. "prontos" é outra coisa: o que sobrou para escrever
+  // depois de tirar o que já estava escrito — e a escrita reescreve aquele.
+  lidosRodada=f.reduce(function(s,c){return s+(c.pedidos||0);},0);
+  prontos=lidosRodada;
   $("vContas").textContent=f.length+"/"+CONTAS_RODADA.length;
-  $("vLidos").textContent=prontos;
+  $("vLidos").textContent=lidosRodada;
   $("vSemLogin").textContent=f.length?sem+" de "+f.length:"—";
   $("resumoContas").textContent=CONTAS_RODADA.length+" contas"+
     (TOTAL?(" · "+TOTAL+" pedidos esperados"):"");
@@ -1958,7 +1964,7 @@ GANCHOS.rodar=function(){
   timers.push(setTimeout(function(){
     pararColeta(); coletou=true;
     $("vTempo").textContent="4 min";
-    avisar("Coleta terminada", prontos+" rastreios lidos. "+pendencias()+" esperando você.");
+    avisar("Coleta terminada", lidosRodada+" pedidos lidos. "+pendencias()+" esperando você.");
     pintaColeta(); pintaEscrita(); pintaTrilha();
     if(direto) escreverTudo(); else ir("3");
   },rapido?0:9200));
@@ -2496,7 +2502,7 @@ function comecarProxima(){
         m:((it.querySelector(".item-cab .est")||{}).textContent||"não resolvido").trim(),
       });
     });
-  arquivos=[]; coletou=false; escrito=false; escritos=0; prontos=0;
+  arquivos=[]; coletou=false; escrito=false; escritos=0; prontos=0; lidosRodada=0; comRastreio=null; jaEscritos=0;
   CONTAS_RODADA.forEach(function(c){estadoConta[c.n]="fila";});
   TRATADOS.length=0;
   $("vTempo").textContent="—";
@@ -3190,7 +3196,7 @@ window.TELA = {
   // se enche só com o que o robô mandar.
   limparExemplos: function(){
     SOZINHO=[]; ATRASADOS=[]; CONTAS_RODADA=[]; estadoConta={};
-    A_ESCREVER=[]; prontos=0; CONTAS_INV=[]; DIAS=[]; CANDIDATOS=[];
+    A_ESCREVER=[]; prontos=0; lidosRodada=0; comRastreio=null; jaEscritos=0; CONTAS_INV=[]; DIAS=[]; CANDIDATOS=[];
     TOTAL=0; coletou=false; escrito=false;
     Array.prototype.forEach.call(document.querySelectorAll("#cxPrecisa .item[data-rev]"),
       function(i){ i.remove(); });
@@ -3299,6 +3305,8 @@ window.TELA = {
                r:(x.codigos||[]).join(" · "), tr:x.transportadora||"—" };
     });
     prontos=A_ESCREVER.length;
+    comRastreio=dados&&dados.resumo&&dados.resumo.casados!=null?dados.resumo.casados:null;
+    jaEscritos=(dados&&typeof dados.pulados==="number")?dados.pulados:0;
     coletou=true;
     pintaEscrita(); pintaTrilha();
     var conf=(dados&&dados.naConferencia)||[];
@@ -3393,7 +3401,7 @@ window.TELA = {
       $("vTempo").textContent = resumo && resumo.segundos ? fmt(resumo.segundos) : "—";
       pintaColeta(); pintaEscrita(); pintaTrilha();
       if(resumo && resumo.erro) return;      // quem avisa do erro é quem chamou
-      avisar("Coleta terminada", prontos+" rastreios lidos. "+pendencias()+" esperando você.");
+      avisar("Coleta terminada", lidosRodada+" pedidos lidos. "+pendencias()+" esperando você.");
       if(direto) escreverTudo(); else ir("3");
     },
   },

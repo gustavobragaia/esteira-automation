@@ -17,6 +17,20 @@ import { DIR_COLETAS, loginDaConta } from "./caminhos.mjs";
 // logou" para sempre depois de uma única vez.
 const MESMA_VISITA_MS = 10 * 60 * 1000;
 
+// Quantos pedidos cada coleta trouxe, lembrado enquanto o arquivo não muda.
+// Uma coleta real tem ~1,7 MB; a Chomps tem ~940 contas. Ler e interpretar
+// tudo de novo a cada chamada eram ~10 s de app congelado — e a tela pedia
+// isto depois de CADA clique na conferência (11/2026, "o app tá travando").
+const lidosEmCache = new Map();   // arquivo -> { mtimeMs, size, lidos }
+function contarLidos(arq, st) {
+  const c = lidosEmCache.get(arq);
+  if (c && c.mtimeMs === st.mtimeMs && c.size === st.size) return c.lidos;
+  let lidos = null;
+  try { lidos = (JSON.parse(readFileSync(arq, "utf8")).pedidos ?? []).length; } catch {}
+  lidosEmCache.set(arq, { mtimeMs: st.mtimeMs, size: st.size, lidos });
+  return lidos;
+}
+
 /**
  * @param {object} [o]
  * @param {Map<number,{serial?:any,userId?:string}>} [o.perfis] da última rodada
@@ -30,10 +44,9 @@ export function contasVistas({ dir = DIR_COLETAS, perfis = new Map(), email } = 
     if (!m) continue;
     const n = Number(m[1]);
     const arq = join(dir, f);
-    const quando = statSync(arq).mtimeMs;
-
-    let lidos = null;
-    try { lidos = (JSON.parse(readFileSync(arq, "utf8")).pedidos ?? []).length; } catch {}
+    const st = statSync(arq);
+    const quando = st.mtimeMs;
+    const lidos = contarLidos(arq, st);
 
     const marca = loginDaConta(n);
     const logou = existsSync(marca) &&
